@@ -108,6 +108,7 @@ function createGround() {
 }
 
 function init() {
+  console.log("commit");
   scene = new THREE.Scene();
   createRenderer();
   createCamera();
