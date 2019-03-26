@@ -16,3 +16,5 @@ Aggiornato il metodo di caricamento delle texture: utilizzando il codice fornito
 ![Warning nel caricamento delle texture](/journalImages/textureLoaderWarning.jpg "Console Warning")
 
 Aggiornato il file "OrbitControls" con la versione più recente scaricata dal [repositiory di three js](https://github.com/mrdoob/three.js)
+
+Aggiunto un file contenente funzioni generali.
