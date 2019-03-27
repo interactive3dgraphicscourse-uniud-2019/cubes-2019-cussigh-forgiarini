@@ -18,3 +18,13 @@ Aggiornato il metodo di caricamento delle texture: utilizzando il codice fornito
 Aggiornato il file "OrbitControls" con la versione più recente scaricata dal [repositiory di three js](https://github.com/mrdoob/three.js)
 
 Aggiunto un file contenente funzioni generali.
+
+27.03.2019
+=============
+Abbiamo scelto di creare un parser per leggere da file i cubi e i diversi oggetti all'interno della scena.
+
+Dopo vari tentativi e problemi, abbiamo optato per rimuovere il parser in favore di funzioni preimpostate che generano gli oggetti nella scena in base ai parametri passati. 
+
+Creata una funzione che crea dei cubi di lato 1 posizionati nel centro dello spazio a partire dalle texture presenti nella cartella "texture". Le Mesh dei cubi generati vengono salvate in un array che ha la funzione di "palette" dei cubi disponibili.
+
+Creata una funzione che genera una griglia con tutti i cubi che si possono utilizzare all'interno della scena.

@@ -32,3 +32,35 @@ function swapArrayValues(arr, a, b) {
     arr[a] = arr[b];
     arr[b] = temp;
 }
+
+/**
+ * Create Stats for canvas and returns a reference to an istance of that plugin.
+ * Requires stats.js
+ */
+function createStats() {
+    let stats = new Stats();
+    stats.domElement.style.position = "absolute";
+    stats.domElement.style.top = "0px";
+    document.body.appendChild(stats.domElement);
+    return stats;
+}
+
+/**
+ * 
+ * @param {Number} c 
+ */
+function componentToHex(c) {
+    let hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+/**
+ * Converts an rgb color to the equivalent hex value
+ * @param {Number} r red value of color
+ * @param {Number} g green value of color
+ * @param {Number} b blue value of color
+ * @returns {String} String represinting the hex value of the color
+ */
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
