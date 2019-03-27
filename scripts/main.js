@@ -132,7 +132,7 @@ function loadWools(loader, geometry, woolColors) {
     let texture = loader.load(name + ".png");
 
     // immediately use the texture for material creation
-    let material = new THREE.MeshBasicMaterial({ map: texture });
+    let material = new THREE.MeshPhongMaterial({ map: texture });
     let cube = new THREE.Mesh(geometry, material);
 
     // enable cube shadow
@@ -191,7 +191,7 @@ function createLights() {
     intensity: 0.6,
     position: new THREE.Vector3(0, 500, 0)
   });
-  //scene.add(hemiLight);
+  scene.add(hemiLight);
 
   dirLight = createDirectionalLight({
     color: rgbToHex(255, 255, 255),
@@ -203,7 +203,7 @@ function createLights() {
       height: 1024
     }
   });
-  //scene.add(dirLight);
+  scene.add(dirLight);
 }
 
 function drawAvailableCubes(position) {
