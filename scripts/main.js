@@ -5,6 +5,8 @@ let scene, camera, renderer, controls, stats;
  */
 let availableCubes;
 
+let world;
+
 /**
  * Creates an istance of THREE.OrbitControls used to move the camera.
  */
@@ -234,10 +236,35 @@ function drawAvailableCubes(position) {
 }
 
 function createScene() {
+  world = [];
+  let i, j, k;
+  let worldEdge = 100;
+  let worldHeight = 30;
+
+  let geometry = new THREE.BoxGeometry(1, 1, 1);
+  let mesh = new THREE.MeshBasicMaterial({color: "green"});
+  let cube = new THREE.Mesh(geometry, mesh);
+  //scene.add(cube);
+
+  for(i=0; i<worldEdge; i++){
+    world[i] = [];
+    for(j=0; j<worldHeight; j++){
+      world[i][j] = [];
+      for(k=0; k<worldEdge; k++){
+        let obj = new THREE.Object3D();
+        obj.add(cube.clone());
+        obj.position.set(i, j, k);
+        world[i][j][k] = obj;
+        scene.add(world[i][j][k])
+      }
+    }
+  }
+
+  console.log(world);
   // GROUND
   createGround();
 
-  drawAvailableCubes(new THREE.Vector3(0, 0, 0));
+  //drawAvailableCubes(new THREE.Vector3(0, 0, 0));
 
   createLights();
 }
