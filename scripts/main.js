@@ -313,7 +313,7 @@ function createTree(dimensions) {
   let heigth = dimensions.y;
   let obj = new THREE.Object3D();
   let cube = availableCubes[2].cube.clone();
-  cube.position.set(2,2,2);
+  cube.position.set(6,6,6);
   obj.add(cube);
   return obj;
 }
