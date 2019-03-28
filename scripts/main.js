@@ -317,3 +317,7 @@ function createTree(dimensions) {
   obj.add(cube);
   return obj;
 }
+
+function createHouse(params) {
+  ;
+}
