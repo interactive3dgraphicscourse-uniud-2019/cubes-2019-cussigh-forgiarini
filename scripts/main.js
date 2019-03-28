@@ -238,7 +238,7 @@ function drawAvailableCubes(position) {
 function createScene() {
   world = [];
   let i, j, k;
-  let worldEdge = 100;
+  let worldEdge = 10;
   let worldHeight = 1;
 
   let geometry = new THREE.BoxGeometry(1, 1, 1);
@@ -265,7 +265,7 @@ function createScene() {
   createGround();
 
   //drawAvailableCubes(new THREE.Vector3(0, 0, 0));
-
+  scene.add(createTree({x:2,y:2}));
   createLights();
 }
 
@@ -304,4 +304,16 @@ function updateWorld() {
 
 function renderWorld() {
   renderer.render(scene, camera);
+}
+
+// tree
+
+function createTree(dimensions) {
+  let width = dimensions.x;
+  let heigth = dimensions.y;
+  let obj = new THREE.Object3D();
+  let cube = availableCubes[2].cube.clone();
+  cube.position.set(2,2,2);
+  obj.add(cube);
+  return obj;
 }
