@@ -239,10 +239,10 @@ function createScene() {
   world = [];
   let i, j, k;
   let worldEdge = 100;
-  let worldHeight = 30;
+  let worldHeight = 1;
 
   let geometry = new THREE.BoxGeometry(1, 1, 1);
-  let mesh = new THREE.MeshBasicMaterial({color: "green"});
+  let mesh = new THREE.MeshBasicMaterial({color: "green", wireframe: true});
   let cube = new THREE.Mesh(geometry, mesh);
   //scene.add(cube);
 
