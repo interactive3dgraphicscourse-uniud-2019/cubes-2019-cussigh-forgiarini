@@ -192,7 +192,6 @@ function getBlockPosition(name) {
     return -1;
   }
   for(let i=0; i<availableCubes.length; i++){
-    console.log(availableCubes[i].name, name);
     if(availableCubes[i].name == name){
       return i;
     }
@@ -282,11 +281,12 @@ function createScene() {
   //drawAvailableCubes(new THREE.Vector3(0, 0, 0));
 
   let pineColor = {color1:"wool_colored_emerald", color2:"wool_colored_turquoise", variance:5};
-  scene.add(createPine({x:5,y:20,z:5},pineColor, {x:0, y:0, z:0}));
+  //scene.add(createPine({x:5,y:20,z:5},pineColor, {x:0, y:0, z:0}));
   scene.add(createPine({x:5,y:6,z:3},pineColor, {x:10, y:0, z:10}));
   scene.add(createPine({x:8,y:15,z:8},pineColor, {x:10, y:0, z:0}));
   scene.add(createPine({x:15,y:10,z:15 },pineColor, {x:20, y:0, z:20}));
   scene.add(createPine({x:15,y:40,z:17 },pineColor, {x:0, y:0, z:20}));
+  scene.add(duck("wool_colored_yellow", {x:0, y:0, z:0}));
   createLights();
 }
 
@@ -465,7 +465,6 @@ function createRing(dimensions, colorData, position) {
   
   //if second color is undefined, uses only color1
   else {
-    console.log(colorData.color1);
     let idColor1 = getBlockPosition(colorData.color1); 
     for (let h = 0; h < height; h++) {   
       for (let i = 0; i < width; i++) {
@@ -481,4 +480,47 @@ function createRing(dimensions, colorData, position) {
   }
   ring.position.set(position.x,position.y,position.z);
   return ring;
+}
+
+function createBlock(color, position) {
+  let currentId = getBlockPosition(color);
+  let cube = availableCubes[currentId].cube.clone();
+  cube.position.set(position.x, position.y, position.z);
+  return cube;
+}
+/**
+ * Creates a duck 3x6x9
+ * 
+ * @param {*} color    color name of the duck
+ * @param {*} position 3VECTOR position
+ */
+function duck (color, position)  {
+  idColor = getBlockPosition(color);
+  let duck = new THREE.Object3D();
+  let feet = new THREE.Object3D();
+  //body
+  duck.add(createRectangle({x:3, z:4}, {color1:color}, {x:0,y:1,z:0}));
+  duck.add(createRing({x:3,y:1, z:6}, {color1:color}, {x:0,y:2,z:0}));
+  duck.add(createRectangle({x:3, z:5}, {color1:color}, {x:0,y:3,z:-1.5}));
+  duck.add(createRing({x:3,y:1, z:2}, {color1:color}, {x:0,y:3,z:2  }));
+
+  //head
+  duck.add(createRing({x:3,y:1, z:4}, {color1:color}, {x:0,y:4,z:2}));
+  duck.add(createRectangle({x:3, z:2}, {color1:color}, {x:0,y:6,z:3}));
+  duck.add(createRing({x:3,y:1, z:2}, {color1:color}, {x:0,y:5,z:2}));
+
+  //eyes
+  duck.add(createBlock ("wool_colored_black", {x:-1,y:5,z:3.5}));
+  duck.add(createBlock (color, {x:0,y:5,z:3.5}));
+  duck.add(createBlock ("wool_colored_black", {x:1,y:5,z:3.5}));
+
+  //beak
+  duck.add(createRectangle({x:3, z:1}, {color1:"wool_colored_orange"}, {x:0,y:4,z:4.5}));
+
+  //feet
+  feet.add(createRectangle({x:1, z:2}, {color1:"wool_colored_orange"}, {x:-1,y:0,z:0}));
+  feet.add(createRectangle({x:1, z:2}, {color1:"wool_colored_orange"}, {x:1,y:0,z:0}));
+  duck.add(feet);
+
+  return duck;
 }
