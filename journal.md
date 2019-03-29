@@ -28,3 +28,11 @@ Dopo vari tentativi e problemi, abbiamo optato per rimuovere il parser in favore
 Creata una funzione che crea dei cubi di lato 1 posizionati nel centro dello spazio a partire dalle texture presenti nella cartella "texture". Le Mesh dei cubi generati vengono salvate in un array che ha la funzione di "palette" dei cubi disponibili.
 
 Creata una funzione che genera una griglia con tutti i cubi che si possono utilizzare all'interno della scena.
+
+28.03.2019
+=============
+Create le funzioni geometriche di base per anelli e rettangoli
+
+Creata la funzione per la generazione di alberi di grandezza e colore impostabili
+
+Modificate tali funzioni per supportare l'utilizzo di due colori, in modo da ottenere alberi più realistici grazie all'utilizzo randomico, ma parzialmente controllabile, del secondo colore

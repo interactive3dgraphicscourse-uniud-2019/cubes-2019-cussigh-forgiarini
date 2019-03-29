@@ -182,19 +182,22 @@ function loadCubes() {
     "white",      //14
     "yellow",     //15
     "turquoise",  //16
+    "emerald"     //17
   ];
   loadWools(loader, geometry, woolColors);
 }
 
-function getBlockID(name) {
+function getBlockPosition(name) {
   if( typeof name === "undefined"){
-    return;
+    return -1;
   }
   for(let i=0; i<availableCubes.length; i++){
+    console.log(availableCubes[i].name, name);
     if(availableCubes[i].name == name){
       return i;
     }
   }
+  return -1; 
 }
 
 function createLights() {
@@ -277,11 +280,13 @@ function createScene() {
   createGround();
 
   //drawAvailableCubes(new THREE.Vector3(0, 0, 0));
-  scene.add(createPine({x:5,y:20,z:5},3, {x:0, y:0, z:0}));
-  scene.add(createPine({x:5,y:6,z:3},3, {x:10, y:0, z:10}));
-  scene.add(createPine({x:8,y:15,z:8},3, {x:10, y:0, z:0}));
-  scene.add(createPine({x:15,y:10,z:15 },3, {x:20, y:0, z:20}));
-  scene.add(createPine({x:15,y:40,z:17 },3, {x:0, y:0, z:20}));
+
+  let pineColor = {color1:"wool_colored_emerald", color2:"wool_colored_turquoise", variance:5};
+  scene.add(createPine({x:5,y:20,z:5},pineColor, {x:0, y:0, z:0}));
+  scene.add(createPine({x:5,y:6,z:3},pineColor, {x:10, y:0, z:10}));
+  scene.add(createPine({x:8,y:15,z:8},pineColor, {x:10, y:0, z:0}));
+  scene.add(createPine({x:15,y:10,z:15 },pineColor, {x:20, y:0, z:20}));
+  scene.add(createPine({x:15,y:40,z:17 },pineColor, {x:0, y:0, z:20}));
   createLights();
 }
 
@@ -325,28 +330,34 @@ function renderWorld() {
 /**Creates a Pine Tree
  * 
  * @param {*} dimension     3VECTOR of tree's position
- * @param {*} id            leaves color identifier
+ * @param {*} colorData     {color1, color2, variance} 
+ *                          color1-2 are the name of the colors of the leaves
+ *                          variance is the color2 presence from 0 (none) to 10 (equal to color1)
  * @param {*} position      3VECTOR of tree's position
  */
-function createPine(dimensions, id, position) {
+function createPine(dimensions, colorData, position) {
   let width = dimensions.x;
   let height = dimensions.y;
   let depth = dimensions.z;
   let tree = new THREE.Object3D();
   let counter=0; //current heigh built
   let thickness = 1;
-  let variance = 4;
   if (depth+width>=30) thickness = 3;
 
+  colorLog = {color1: "wool_colored_brown"}
+  colorLeaves1 = {color1: colorData.color1};
+  colorLeaves2 = {color1: colorData.color2};
+  colorLeavesDouble = {color1: colorData.color1, color2: colorData.color2, variance: colorData.variance};
+
   // building the log
-  tree.add(createRing({x:thickness,y:Math.floor(height/3)+1,z:thickness},2,{x:0,y:0,z:0}));
+  tree.add(createRing({x:thickness,y:Math.floor(height/3)+1,z:thickness},colorLog,{x:0,y:0,z:0}));
   counter = Math.floor(height/3)+1;
   
   // adding internal part and leaves below the log
-  tree.add(createRing({x:width,y:1, z:depth},id,{x:0,y:counter,z:0}));
-  tree.add(createRing({x:width,y:1, z:depth},id,{x:0,y:counter-1,z:0}));
-  tree.add(createRing({x:width,y:1, z:depth},id,{x:0,y:counter-2,z:0}));
-  tree.add(createRectangle({x:width-2, z:depth-2},7,{x:0,y:counter,z:0}));
+  tree.add(createRing({x:width,y:1, z:depth},colorLeavesDouble,{x:0,y:counter,z:0}));
+  tree.add(createRing({x:width,y:1, z:depth},colorLeavesDouble,{x:0,y:counter-1,z:0}));
+  tree.add(createRing({x:width,y:1, z:depth},colorLeavesDouble,{x:0,y:counter-2,z:0}));
+  tree.add(createRectangle({x:width-2, z:depth-2},colorLeaves2,{x:0,y:counter,z:0}));
   counter++;
 
   //creating the leaves until the top of the tree
@@ -357,11 +368,12 @@ function createPine(dimensions, id, position) {
   for(let i=0; i<spaceleft; i++) {
     width = width - reductionFactor;
     depth = depth - reductionFactor;
-    tree.add(createRing({x:Math.ceil(width), y:1, z:Math.ceil(depth)},id, {x:0,y:counter, z:0}));
+    tree.add(createRing({x:Math.ceil(width), y:1, z:Math.ceil(depth)},colorLeavesDouble, {x:0,y:counter, z:0}));
     counter++;
   }
   //close the top if it's not already
-  if ((width!=1)&&(depth!=1)) tree.add(createRectangle({x:Math.ceil(width)-2, z:Math.ceil(depth)-2},id, {x:0,y:counter--, z:0}));
+  if ((width!=1)&&(depth!=1)) tree.add(createRectangle({x:Math.ceil(width)-2, 
+                                      z:Math.ceil(depth)-2},colorLeavesDouble, {x:0,y:counter--, z:0}));
   tree.position.set(position.x, position.y, position.z);
   return tree;
 }
@@ -372,76 +384,97 @@ function createPine(dimensions, id, position) {
  * Height is fixed because internal boxes of a parallelepiped should not be constructed
  * 
  * @param {*} dimensions    rectangle's width and depth
- * @param {*} id            color identifier 
+ * @param {*} colorData     {color1, color2, variance} 
+ *                          color1-2 are the name of the colors
+ *                          variance is the color2 presence from 0 (none) to 10 (equal to color1)
  * @param {*} position      3VECTOR of rectangle's position
  */
 
-/* function createRectangle(dimensions, id1, id2, varfact, position) {
+  function createRectangle(dimensions, colorData, position) {
   let width = dimensions.x;
   let depth = dimensions.z;
   let rectangle = new THREE.Object3D();
   let cube;
-  let variance, currentid;
-  let varianceFact = varfact
-  if (id1 == id2) {
-    variance = false;
-    currentid = id1;
-  }
-  else {
-    variance = true;
-    currentid = id1;
-  }
-  for (let i = 0; i < width; i++) {
-    for (let j = 0; j < depth; j++) {
-      if(variance) {
-        if(Math.floor(Math.random() * 21)>=varianceFact) currentid =id1;
-        else currentid = id2;
-      }
-      cube = availableCubes[currentid].cube.clone();
-      cube.position.set(i - width / 2 + 0.5, 0, j - depth / 2 + 0.5);
-      rectangle.add(cube);
-    }
-  }
-  rectangle.position.set(position.x,position.y,position.z);
-  return rectangle;
-}
-*/
 
-function createRectangle(dimensions, id, position) {
-  let width = dimensions.x;
-  let depth = dimensions.z;
-  let rectangle = new THREE.Object3D();
-  let cube;
-  for (let i = 0; i < width; i++) {
-    for (let j = 0; j < depth; j++) {
-      cube = availableCubes[id].cube.clone();
-      cube.position.set(i - width / 2 + 0.5, 0, j - depth / 2 + 0.5);
-      rectangle.add(cube);
+  //if second color is passed to the function, randomly decides which color to choose
+  if (typeof colorData.color2 !== "undefined") {
+    let idColor1 = getBlockPosition(colorData.color1);
+    let idColor2 = getBlockPosition (colorData.color2);
+    let currentId;
+    let varianceFact = colorData.variance;
+    for (let i = 0; i < width; i++) {
+      for (let j = 0; j < depth; j++) {
+        if(Math.floor(Math.random() * 21)>=varianceFact) currentId = idColor1;
+        else currentId = idColor2;
+        cube = availableCubes[currentId].cube.clone();
+        cube.position.set(i - width / 2 + 0.5, 0, j - depth / 2 + 0.5);
+        rectangle.add(cube);
+      }
+    }
+  }
+  //if second color is undefined, uses only color1
+  else {
+    let idColor1 = getBlockPosition(colorData.color1);
+    for (let i = 0; i < width; i++) {
+      for (let j = 0; j < depth; j++) {      
+        cube = availableCubes[idColor1].cube.clone();
+        cube.position.set(i - width / 2 + 0.5, 0, j - depth / 2 + 0.5);
+        rectangle.add(cube);
+      }
     }
   }
   rectangle.position.set(position.x,position.y,position.z);
   return rectangle;
 }
+
 
 /**Creates a ring of boxes (a cylinder without top and bottom faces)
  * 
- * @param {*} dimensions    ring's width and depth
- * @param {*} id            color identifier 
+ * @param {*} dimensions    3VECTOR of ring's dimensions
+ * @param {*} colorData     {color1, color2, variance} 
+ *                          color1-2 are the name of the colors
+ *                          variance is the color2 presence from 0 (none) to 10 (equal to color1)
  * @param {*} position      3VECTOR of ring's position
  */
-function createRing(dimensions, id, position) {
+function createRing(dimensions, colorData, position) {
   let width = dimensions.x;
   let height = dimensions.y;
   let depth = dimensions.z;
   let ring = new THREE.Object3D();
   let cube;
-  for (let h = 0; h < height; h++){
-    for (let i = 0; i < width; i++) {
-      for (let j = 0; j < depth; j++) {
-        if((i==0||i==width-1)||(j==0||j==depth-1)) {
-          cube = availableCubes[id].cube.clone();
-          cube.position.set(i - width / 2 + 0.5, h, j - depth / 2 + 0.5);
-          ring.add(cube);
+
+  //if second color is passed to the function, randomly decides which color to choose
+  if (typeof colorData.color2 !== "undefined") {
+    let idColor1 = getBlockPosition(colorData.color1);   
+    let idColor2 = getBlockPosition(colorData.color2);
+    let variance = colorData.variance;
+    for (let h = 0; h < height; h++) {
+      for (let i = 0; i < width; i++) {
+        for (let j = 0; j < depth; j++) {
+          if((i==0||i==width-1)||(j==0||j==depth-1)) {
+            if(Math.floor(Math.random() * 21)>=variance) currentId = idColor1;
+            else currentId = idColor2;
+            cube = availableCubes[currentId].cube.clone();
+            cube.position.set(i - width / 2 + 0.5, h, j - depth / 2 + 0.5);
+            ring.add(cube);
+          }
+        }
+      }
+    }
+  }
+  
+  //if second color is undefined, uses only color1
+  else {
+    console.log(colorData.color1);
+    let idColor1 = getBlockPosition(colorData.color1); 
+    for (let h = 0; h < height; h++) {   
+      for (let i = 0; i < width; i++) {
+        for (let j = 0; j < depth; j++) {
+          if((i==0||i==width-1)||(j==0||j==depth-1)) {
+            cube = availableCubes[idColor1].cube.clone();
+            cube.position.set(i - width / 2 + 0.5, h, j - depth / 2 + 0.5);
+            ring.add(cube);
+          }
         }
       }
     }
