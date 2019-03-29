@@ -165,24 +165,36 @@ function loadCubes() {
 
   // wools color to load
   let woolColors = [
-    "black",
-    "blue",
-    "brown",
-    "cyan",
-    "gray",
-    "green",
-    "light_blue",
-    "lime",
-    "magenta",
-    "orange",
-    "pink",
-    "purple",
-    "red",
-    "silver",
-    "white",
-    "yellow",
+    "black",      //0
+    "blue",       //1
+    "brown",      //2
+    "cyan",       //3
+    "gray",       //4
+    "green",      //5
+    "light_blue", //6
+    "lime",       //7
+    "magenta",    //8
+    "orange",     //9
+    "pink",       //10
+    "purple",     //11
+    "red",        //12
+    "silver",     //13
+    "white",      //14
+    "yellow",     //15
+    "turquoise",  //16
   ];
   loadWools(loader, geometry, woolColors);
+}
+
+function getBlockID(name) {
+  if( typeof name === "undefined"){
+    return;
+  }
+  for(let i=0; i<availableCubes.length; i++){
+    if(availableCubes[i].name == name){
+      return i;
+    }
+  }
 }
 
 function createLights() {
@@ -265,7 +277,11 @@ function createScene() {
   createGround();
 
   //drawAvailableCubes(new THREE.Vector3(0, 0, 0));
-  scene.add(createTree({x:2,y:2}));
+  scene.add(createPine({x:5,y:20,z:5},3, {x:0, y:0, z:0}));
+  scene.add(createPine({x:5,y:6,z:3},3, {x:10, y:0, z:10}));
+  scene.add(createPine({x:8,y:15,z:8},3, {x:10, y:0, z:0}));
+  scene.add(createPine({x:15,y:10,z:15 },3, {x:20, y:0, z:20}));
+  scene.add(createPine({x:15,y:40,z:17 },3, {x:0, y:0, z:20}));
   createLights();
 }
 
@@ -306,14 +322,130 @@ function renderWorld() {
   renderer.render(scene, camera);
 }
 
-// tree
-
-function createTree(dimensions) {
+/**Creates a Pine Tree
+ * 
+ * @param {*} dimension     3VECTOR of tree's position
+ * @param {*} id            leaves color identifier
+ * @param {*} position      3VECTOR of tree's position
+ */
+function createPine(dimensions, id, position) {
   let width = dimensions.x;
-  let heigth = dimensions.y;
-  let obj = new THREE.Object3D();
-  let cube = availableCubes[2].cube.clone();
-  cube.position.set(6,6,6);
-  obj.add(cube);
-  return obj;
+  let height = dimensions.y;
+  let depth = dimensions.z;
+  let tree = new THREE.Object3D();
+  let counter=0; //current heigh built
+  let thickness = 1;
+  let variance = 4;
+  if (depth+width>=30) thickness = 3;
+
+  // building the log
+  tree.add(createRing({x:thickness,y:Math.floor(height/3)+1,z:thickness},2,{x:0,y:0,z:0}));
+  counter = Math.floor(height/3)+1;
+  
+  // adding internal part and leaves below the log
+  tree.add(createRing({x:width,y:1, z:depth},id,{x:0,y:counter,z:0}));
+  tree.add(createRing({x:width,y:1, z:depth},id,{x:0,y:counter-1,z:0}));
+  tree.add(createRing({x:width,y:1, z:depth},id,{x:0,y:counter-2,z:0}));
+  tree.add(createRectangle({x:width-2, z:depth-2},7,{x:0,y:counter,z:0}));
+  counter++;
+
+  //creating the leaves until the top of the tree
+  let spaceleft = height - counter;
+  let reductionFactor = Math.min(width, depth) / spaceleft;
+  //reduction factor: how much the leaves need to shrink at each level
+  if (reductionFactor > 1) reductionFactor=1;
+  for(let i=0; i<spaceleft; i++) {
+    width = width - reductionFactor;
+    depth = depth - reductionFactor;
+    tree.add(createRing({x:Math.ceil(width), y:1, z:Math.ceil(depth)},id, {x:0,y:counter, z:0}));
+    counter++;
+  }
+  //close the top if it's not already
+  if ((width!=1)&&(depth!=1)) tree.add(createRectangle({x:Math.ceil(width)-2, z:Math.ceil(depth)-2},id, {x:0,y:counter--, z:0}));
+  tree.position.set(position.x, position.y, position.z);
+  return tree;
+}
+
+
+/**
+ * Creates a rectangle of boxes with heigth=1
+ * Height is fixed because internal boxes of a parallelepiped should not be constructed
+ * 
+ * @param {*} dimensions    rectangle's width and depth
+ * @param {*} id            color identifier 
+ * @param {*} position      3VECTOR of rectangle's position
+ */
+
+/* function createRectangle(dimensions, id1, id2, varfact, position) {
+  let width = dimensions.x;
+  let depth = dimensions.z;
+  let rectangle = new THREE.Object3D();
+  let cube;
+  let variance, currentid;
+  let varianceFact = varfact
+  if (id1 == id2) {
+    variance = false;
+    currentid = id1;
+  }
+  else {
+    variance = true;
+    currentid = id1;
+  }
+  for (let i = 0; i < width; i++) {
+    for (let j = 0; j < depth; j++) {
+      if(variance) {
+        if(Math.floor(Math.random() * 21)>=varianceFact) currentid =id1;
+        else currentid = id2;
+      }
+      cube = availableCubes[currentid].cube.clone();
+      cube.position.set(i - width / 2 + 0.5, 0, j - depth / 2 + 0.5);
+      rectangle.add(cube);
+    }
+  }
+  rectangle.position.set(position.x,position.y,position.z);
+  return rectangle;
+}
+*/
+
+function createRectangle(dimensions, id, position) {
+  let width = dimensions.x;
+  let depth = dimensions.z;
+  let rectangle = new THREE.Object3D();
+  let cube;
+  for (let i = 0; i < width; i++) {
+    for (let j = 0; j < depth; j++) {
+      cube = availableCubes[id].cube.clone();
+      cube.position.set(i - width / 2 + 0.5, 0, j - depth / 2 + 0.5);
+      rectangle.add(cube);
+    }
+  }
+  rectangle.position.set(position.x,position.y,position.z);
+  return rectangle;
+}
+
+/**Creates a ring of boxes (a cylinder without top and bottom faces)
+ * 
+ * @param {*} dimensions    ring's width and depth
+ * @param {*} id            color identifier 
+ * @param {*} position      3VECTOR of ring's position
+ */
+function createRing(dimensions, id, position) {
+  let width = dimensions.x;
+  let height = dimensions.y;
+  let depth = dimensions.z;
+  let ring = new THREE.Object3D();
+  let cube;
+  for (let h = 0; h < height; h++){
+    for (let i = 0; i < width; i++) {
+      for (let j = 0; j < depth; j++) {
+        if((i==0||i==width-1)||(j==0||j==depth-1)) {
+          cube = availableCubes[id].cube.clone();
+          cube.position.set(i - width / 2 + 0.5, h, j - depth / 2 + 0.5);
+          ring.add(cube);
+        }
+      }
+    }
+  }
+  ring.position.set(position.x,position.y,position.z);
+  return ring;
 }
