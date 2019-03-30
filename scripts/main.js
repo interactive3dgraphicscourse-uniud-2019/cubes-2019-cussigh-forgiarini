@@ -5,8 +5,6 @@ let scene, camera, renderer, controls, stats;
  */
 let availableCubes;
 
-let world;
-
 /**
  * Creates an istance of THREE.OrbitControls used to move the camera.
  */
@@ -236,36 +234,22 @@ function drawAvailableCubes(position) {
 }
 
 function createScene() {
-  world = [];
-  let i, j, k;
-  let worldEdge = 10;
-  let worldHeight = 1;
+  let house = createHouse({
+    width: 10,
+    height: 6,
+    depth: 10,
+    roofHeight: 2,
+    windowsNumber: 2,
+    chimney: 1,
+  });
 
-  let geometry = new THREE.BoxGeometry(1, 1, 1);
-  let mesh = new THREE.MeshBasicMaterial({color: "green", wireframe: true});
-  let cube = new THREE.Mesh(geometry, mesh);
-  //scene.add(cube);
+  scene.add(house);
 
-  for(i=0; i<worldEdge; i++){
-    world[i] = [];
-    for(j=0; j<worldHeight; j++){
-      world[i][j] = [];
-      for(k=0; k<worldEdge; k++){
-        let obj = new THREE.Object3D();
-        obj.add(cube.clone());
-        obj.position.set(i, j, k);
-        world[i][j][k] = obj;
-        scene.add(world[i][j][k])
-      }
-    }
-  }
-
-  console.log(world);
   // GROUND
   createGround();
 
   //drawAvailableCubes(new THREE.Vector3(0, 0, 0));
-  scene.add(createTree({x:2,y:2}));
+
   createLights();
 }
 
@@ -306,18 +290,28 @@ function renderWorld() {
   renderer.render(scene, camera);
 }
 
-// tree
+function createHouse(data) {
 
-function createTree(dimensions) {
-  let width = dimensions.x;
-  let heigth = dimensions.y;
-  let obj = new THREE.Object3D();
-  let cube = availableCubes[2].cube.clone();
-  cube.position.set(2,2,2);
-  obj.add(cube);
-  return obj;
-}
+  let width = data.width;
+  let height = data.height;
+  let depth = data.depth;
+  let roofHeight = data.roofHeight;
+  let windowsNumber = data.windowsNumber;
+  let chimney = data.chimney;
 
-function createHouse(params) {
-  ;
+  let house = new THREE.Object3D();
+
+  let floor = new THREE.Object3D();
+  let i, j, k;
+  for (i = 0; i < width; i++) {
+    for (j = 0; j < depth; j++) {
+      let obj = new THREE.Object3D();
+      obj.add(availableCubes[0].cube.clone());
+      obj.position.set(i - width / 2 + 0.5, 0, j - depth / 2 + 0.5);
+      floor.add(obj);
+    }
+  }
+  floor.position.set(0, 0, 0);
+  house.add(floor);
+  return house;
 }
