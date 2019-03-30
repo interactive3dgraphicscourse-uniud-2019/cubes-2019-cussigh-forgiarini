@@ -43,9 +43,17 @@ function createDirectionalLight(data) {
     dirLight.position.set(data.position.x, data.position.y, data.position.z);
 
     if (data.shadow.enabled) {
+        var d = 100;
         dirLight.castShadow = true;
-        dirLight.shadow.mapSize.width = data.shadow.width;
-        dirLight.shadow.mapSize.height = data.shadow.height;
+        dirLight.shadow.camera.left = - d;
+        dirLight.shadow.camera.right = d;
+        dirLight.shadow.camera.top = d;
+        dirLight.shadow.camera.bottom = - d;
+        dirLight.shadow.camera.near = 1;
+        dirLight.shadow.camera.far = 150;
+        dirLight.shadow.mapSize.x = 1024;
+        dirLight.shadow.mapSize.y = 1024;
+
     }
     return dirLight;
 }
@@ -63,7 +71,7 @@ function createLights() {
     dirLight = createDirectionalLight({
         color: rgbToHex(255, 255, 255),
         intensity: 1,
-        position: new THREE.Vector3(255, 255, 255),
+        position: new THREE.Vector3(100,50,0),
         shadow: {
             enabled: true,
             width: 1024,
@@ -71,4 +79,7 @@ function createLights() {
         }
     });
     scene.add(dirLight);
+    
+    var helper = new THREE.CameraHelper(dirLight.shadow.camera);
+    scene.add(helper);
 }
