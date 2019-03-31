@@ -72,6 +72,7 @@ function createStable(data) {
     
   
     stable.position.set(position.x,position.y,position.z);
+    stable.scale.set(2,2,2);
     return stable;
 }
 

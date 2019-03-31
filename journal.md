@@ -36,3 +36,13 @@ Create le funzioni geometriche di base per anelli e rettangoli
 Creata la funzione per la generazione di alberi di grandezza e colore impostabili
 
 Modificate tali funzioni per supportare l'utilizzo di due colori, in modo da ottenere alberi più realistici grazie all'utilizzo randomico, ma parzialmente controllabile, del secondo colore
+
+29.03.2019
+=============
+Create le funzioni per la creazione di anatre, maiali e mucche
+
+30.03.2019
+=============
+Refactoring del codice, diviso in diversi file per maggiore chiarezza
+
+Creata la funzione per generare stalle e tetti
