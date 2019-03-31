@@ -45,4 +45,9 @@ Create le funzioni per la creazione di anatre, maiali e mucche
 =============
 Refactoring del codice, diviso in diversi file per maggiore chiarezza
 
-Creata la funzione per generare stalle e tetti
+Create le funzioni per generare stalle e tetti, parametriche su dimensioni e colore
+
+31.03.2019
+=============
+Creata la funzione per generare il mulino, parametrica su dimensioni e colore. Predisposta all'animazione sulle pale.
+

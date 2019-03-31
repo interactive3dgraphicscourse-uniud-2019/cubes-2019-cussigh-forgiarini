@@ -42,7 +42,6 @@ function createStable(data) {
     let height = data.height;
     let depth = data.depth;
     let position = data.position;
-    console.log(depth);
     let color1 = data.colors.color1;
     let color2 = data.colors.color2;
     let stable = new THREE.Object3D();
@@ -72,7 +71,6 @@ function createStable(data) {
     
   
     stable.position.set(position.x,position.y,position.z);
-    stable.scale.set(2,2,2);
     return stable;
 }
 
@@ -112,4 +110,79 @@ function createRoof(data) {
 
     roof.position.set(position.x,position.y, position.z);
     return roof;
+}
+
+
+function createWindmill(data) {
+    let width = data.width;
+    let height = data.height;
+    let depth = data.depth;
+    let position = data.position;
+    let colors = data.colors;
+
+    let windmill = new THREE.Object3D();
+    let capHeight = 3;
+    let capWidth = width - 4;
+    let capDepth = depth - 4;
+    let columnHeight = height-2 - capHeight;
+
+    //base
+    windmill.add(createRing({x:width,y:1,z:depth}, {color1:colors.color2}, {x:0, y:0,z:0}));
+    windmill.add(createRing({x:width-2,y:1,z:depth-2}, {color1:colors.color2}, {x:0, y:1,z:0}));
+    
+    //column
+    windmill.add(createRing(
+        {x:width-4,y:columnHeight,z:depth-4}, 
+        {color1:colors.color1,color2:colors.color2, variance:2 }, 
+        {x:0, y:2,z:0}
+    ));
+
+    //cap
+    for (let i=0; i<capHeight; i++){
+        windmill.add(createRing({x:capWidth,y:1,z:capDepth}, {color1:colors.color1}, {x:0, y:height- capHeight +i,z:0}));
+        capWidth--;
+        capDepth--;
+    }
+    if(capWidth>1 && capDepth>1) {
+        windmill.add(createRectangle({x:capWidth,y:1,z:capDepth}, {color1:colors.color1}, {x:0, y:height,z:0}));
+    }
+
+    //blades
+    let blades = new THREE.Object3D();
+    let bladeDepth = Math.floor((depth - 4)/2);
+    if (bladeDepth%2==0) bladesDepth--;
+    let bladeHeight = Math.floor(columnHeight/2);
+    let blade1 = new THREE.Object3D();
+
+    blade1.add(createRing(
+        {x:1, y:bladeHeight, z:bladeDepth},
+        {color1:colors.color2},
+        {x:width/2-2.5+2, y:Math.ceil(bladeDepth/2),z:0
+    } ));
+    blade1.add (createRing(
+        {x:1, y:bladeDepth/2, z:1},
+        {color1:colors.color2},
+        {x:width/2-2.5+2, y:1,z:0
+    } ));
+    blade2 = blade1.clone();
+    blade2.rotation.set(-Math.PI/2,0,0);
+    blade3 = blade1.clone();
+    blade3.rotation.set(+Math.PI/2,0,0);
+    blade4 = blade1.clone();
+    blade4.rotation.set(+Math.PI,0,0);
+    blades.add(blade1);
+    blades.add(blade2);
+    blades.add(blade3);
+    blades.add(blade4);
+    blades.position.set(0,columnHeight ,0)
+    blades.add(createRing(
+        {x:2, y:1, z:1},
+        {color1:"wool_colored_white"},
+        {x:width/2-1, y:0,z:0
+    } ));
+
+    blades.rotation.set(Math.PI/3,0,0);
+    windmill.add(blades);
+    windmill.position.set(position.x,position.y, position.z);
+    return windmill; 
 }

@@ -91,10 +91,10 @@ function createScene() {
 
   let pineColor = { color1: "wool_colored_emerald", color2: "wool_colored_turquoise", variance: 5 };
   //scene.add(createPine({x:5,y:20,z:5},pineColor, {x:0, y:0, z:0}));
-  /* scene.add(createPine({ x: 5, y: 6, z: 3 }, pineColor, { x: 10, y: 0, z: 10 }));
-  scene.add(createPine({ x: 8, y: 15, z: 8 }, pineColor, { x: 10, y: 0, z: 0 }));
-  scene.add(createPine({ x: 15, y: 10, z: 15 }, pineColor, { x: 20, y: 0, z: 20 }));
-  scene.add(createPine({ x: 15, y: 40, z: 17 }, pineColor, { x: 0, y: 0, z: 20 })); */
+  scene.add(createPine({ x: 5, y: 6, z: 3 }, pineColor, { x: -20, y: 0, z: 10 }));
+  scene.add(createPine({ x: 8, y: 15, z: 8 }, pineColor, { x: -20, y: 0, z: 0 }));
+  scene.add(createPine({ x: 15, y: 10, z: 15 }, pineColor, { x: 20, y: 0, z: 25 }));
+  scene.add(createPine({ x: 15, y: 40, z: 17 }, pineColor, { x: 30, y: 0, z: 15 }));
 
   animals.push(createDuck("wool_colored_yellow", { x: -5, y: 0, z: 10 }));
   animals.push(createPig("wool_colored_light_pink", { x: 4, y: 0, z: 10 }));
@@ -118,12 +118,22 @@ function createScene() {
     }));
   scene.add(cowWrapper);
 
-  scene.add(createStable({
+  let stable = createStable({
     width:16,height:10, depth:16, 
     colors:{color1:"wool_colored_light_brown", color2:"wool_colored_beige"}, 
     position:{x:0,y:0,z:0} 
-  }));
+  });
+  stable.scale.set(2,2,2);
 
+  let windmill = createWindmill({
+    width:10,height:20, depth:11,
+    colors:{color1:"wool_colored_light_brown", color2:"wool_colored_cyan"}, 
+    position:{x:-40,y:0,z:0} 
+  });
+  windmill.scale.set(2,2,2);
+
+  scene.add(stable);
+  scene.add(windmill);
   createLights();
 }
 
