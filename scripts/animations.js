@@ -1,9 +1,11 @@
 let sphereRotations;
 let simpleRotations;
+let movingOBJInsideContainers;
 
 function initAnimations() {
     sphereRotations = [];
     simpleRotations = [];
+    movingOBJInsideContainers = [];
 }
 
 function addSimpleRotation(rotationVector, object3D, time) {
@@ -57,6 +59,30 @@ function animateWorld() {
                 )
             );
             simpleRotations[i].object3D.matrixAutoUpdate = false;
+        }
+
+        for(let i=0; i<movingOBJInsideContainers.length; i++){
+            let obj = movingOBJInsideContainers[i].object3D;
+            let velocity = movingOBJInsideContainers[i].velocity;
+            let containerData = movingOBJInsideContainers[i].containerData;
+
+            obj.position.add(velocity);
+            if(obj.position.x >= containerData.position.x+containerData.dimensions.x/2){
+                movingOBJInsideContainers[i].velocity.multiply(new THREE.Vector3(-1, 1, 1));
+                obj.rotateOnAxis(Y_AXIS, Z_AXIS.angleTo(velocity));
+            }
+            if(obj.position.x <= containerData.position.x-containerData.dimensions.x/2){
+                movingOBJInsideContainers[i].velocity.multiply(new THREE.Vector3(-1, 1, 1));
+                obj.rotateOnAxis(Y_AXIS, Z_AXIS.angleTo(velocity));
+            }
+            if(obj.position.z >= containerData.position.z+containerData.dimensions.z/2){
+                movingOBJInsideContainers[i].velocity.multiply(new THREE.Vector3(1, 1, -1));
+                obj.rotateOnAxis(Y_AXIS, Z_AXIS.angleTo(velocity));
+            }
+            if(obj.position.z <= containerData.position.z-containerData.dimensions.z/2){
+                movingOBJInsideContainers[i].velocity.multiply(new THREE.Vector3(1, 1, -1));
+                obj.rotateOnAxis(Y_AXIS, Z_AXIS.angleTo(velocity));
+            }
         }
     }
 }
@@ -133,4 +159,13 @@ function createCicleSphereAnimation(data) {
         sinMultiplier: data.sinMultiplier
     });
     return animationWrapper;
+}
+
+function moveObjectInsideContainer(object3D, containerData, velocity) {
+    object3D.rotateOnAxis(Y_AXIS, Z_AXIS.angleTo(velocity));
+    movingOBJInsideContainers.push({
+        object3D: object3D,
+        containerData: containerData,
+        velocity: velocity
+    });
 }

@@ -77,7 +77,7 @@ function createScene() {
   //createGround();
 
   let duck = createDuck("wool_colored_yellow", { x: 0, y: 0, z: 0 }, true);
-
+/*
   scene.add(createCicleSphereAnimation({
     objectToAnimate: duck,
     spherePosition: new THREE.Vector3(5, 0, 5),
@@ -88,17 +88,56 @@ function createScene() {
     sinMultiplier: 4,
     rotationTime: 20000
   }));
-
+*/
   let windmill = createWindmill({
     width: 10, height: 20, depth: 11,
     colors: { color1: "wool_colored_light_brown", color2: "wool_colored_cyan" },
     position: { x: -40, y: 0, z: 0 }
   });
 
-  scene.add(windmill);
+  //scene.add(windmill);
   
+  let pig = createPig("wool_colored_light_pink" ,new THREE.Vector3(0, 0.5, 0));
+  let recintoData = {
+    dimensions:{
+      x: 40,
+      y: 1,
+      z: 40,
+    },
+    position: {
+      x:0,
+      y:0,
+      z:0
+    }
+  };
+  let recinto = createRing(recintoData.dimensions, {color1:"wool_colored_brown"}, recintoData.position);
+  scene.add(pig);
+  scene.add(recinto);
+
+  moveObjectInsideContainer(pig, recintoData, new THREE.Vector3(1,0,0.5));
+
   createLights();
 }
+
+/*
+move
+if hit
+  calculate new direction
+
+  
+  x += xSpeed;
+  y += ySpeed;
+  
+  if (x < 0 || x > width) {
+    xSpeed *= -1;
+  }
+
+  if (y < 0  || y > height) {
+    ySpeed *= -1;
+  }
+}
+
+*/
 
 function init() {
   scene = new THREE.Scene();
