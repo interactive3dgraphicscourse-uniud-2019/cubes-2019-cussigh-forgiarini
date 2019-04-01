@@ -208,7 +208,12 @@ function createRing(dimensions, colorData, position) {
     ring.position.set(position.x, position.y, position.z);
     return ring;
 }
-
+/**
+ * returns a cube from availablecubes
+ * 
+ * @param {String} color    color name of the block
+ * @param {Object} position 3VECTOR of the position of the stable
+ */
 function createBlock(color, position) {
     let currentId = getBlockPosition(color);
     let cube = availableCubes[currentId].cube.clone();

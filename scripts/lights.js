@@ -73,7 +73,7 @@ function createLights() {
         intensity: 1,
         position: new THREE.Vector3(100,50,0),
         shadow: {
-            enabled: true,
+            enabled: false,
             width: 1024,
             height: 1024
         }
