@@ -65,3 +65,12 @@ function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
+/**
+ * Converts an angle in degrees in the corrisponding angle in radians
+ * 
+ * @param {Number} deg angle expressed in degrees
+ * @returns {Number} Angle expressend in radians
+ */
+function degToRad(deg) {
+    return deg * (Math.PI / 180)
+}
