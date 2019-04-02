@@ -170,19 +170,25 @@ function createWindmill(data) {
     blade3.rotation.set(+Math.PI/2,0,0);
     blade4 = blade1.clone();
     blade4.rotation.set(+Math.PI,0,0);
+    
     blades.add(blade1);
     blades.add(blade2);
     blades.add(blade3);
     blades.add(blade4);
-    blades.position.set(0,columnHeight ,0)
+
     blades.add(createRing(
         {x:2, y:1, z:1},
         {color1:"wool_colored_white"},
         {x:width/2-1, y:0,z:0
     } ));
-
-    blades.rotation.set(Math.PI/3,0,0);
-    windmill.add(blades);
+    addSimpleRotation(new THREE.Vector3(1, 0, 0), blades, 5000);
+    
+    let bladesContainer = new THREE.Object3D();
+    bladesContainer.add(blades);
+    bladesContainer.position.set(0,columnHeight ,0)
+    
+    windmill.add(bladesContainer);
     windmill.position.set(position.x,position.y, position.z);
-    return windmill; 
+
+    return windmill;
 }

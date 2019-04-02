@@ -48,7 +48,7 @@ function createCamera(position, lookAt) {
     0.1,
     1000
   );
-  position = typeof position == "undefined" ? new THREE.Vector3(2, 5, 10) : position;
+  position = typeof position == "undefined" ? new THREE.Vector3(10, 20, 20) : position;
   camera.position.set(position.x, position.y, position.z);
   lookAt = typeof lookAt == "undefined" ? new THREE.Vector3(0, 0, 0) : lookAt;
   camera.lookAt(lookAt);
@@ -73,16 +73,6 @@ let cowWrapper;
 let cowContainer;
 
 function createScene() {
-  let house = createHouse({
-    width: 10,
-    height: 6,
-    depth: 10,
-    roofHeight: 2,
-    windowsNumber: 2,
-    chimney: 1,
-  });
-
-  //scene.add(house);
   // GROUND
   createGround();
 
@@ -125,6 +115,21 @@ function createScene() {
   });
   stable.scale.set(2, 2, 2);
 
+  //createGround();
+
+  let duck = createDuck("wool_colored_yellow", { x: 0, y: 0, z: 0 }, true);
+/*
+  scene.add(createCicleSphereAnimation({
+    objectToAnimate: duck,
+    spherePosition: new THREE.Vector3(5, 0, 5),
+    radius: 10,
+    rotationVector: new THREE.Vector3(0, 1, 0),
+    sinMovement: true,
+    sinTime: 4000,
+    sinMultiplier: 4,
+    rotationTime: 20000
+  }));
+*/
   let windmill = createWindmill({
     width: 10, height: 20, depth: 11,
     colors: { color1: "wool_colored_light_brown", color2: "wool_colored_cyan" },
@@ -136,16 +141,58 @@ function createScene() {
   scene.add(windmill); */
   let terrain = createTerrain();
   scene.add(terrain);
+
+  //scene.add(windmill);
+  
+  let pig = createPig("wool_colored_light_pink" ,new THREE.Vector3(30, 0.5, 50));
+  let recintoData = {
+    dimensions:{
+      x: 40,
+      y: 1,
+      z: 80,
+    },
+    position: {
+      x:20,
+      y:0,
+      z:70
+    }
+  };
+  let recinto = createRing(recintoData.dimensions, {color1:"wool_colored_brown"}, recintoData.position);
+  scene.add(pig);
+  scene.add(recinto);
+
+  moveObjectInsideContainer(pig, recintoData, new THREE.Vector3(1,0,0.5));
+
   createLights();
 
 
 }
 
+/*
+move
+if hit
+  calculate new direction
+
+  
+  x += xSpeed;
+  y += ySpeed;
+  
+  if (x < 0 || x > width) {
+    xSpeed *= -1;
+  }
+
+  if (y < 0  || y > height) {
+    ySpeed *= -1;
+  }
+}
+
+*/
+
 function init() {
   scene = new THREE.Scene();
   createRenderer();
 
-  createCamera(new THREE.Vector3(2, 5, 10));
+  createCamera(new THREE.Vector3(10, 10, 20));
 
   // creating stats of frame
   stats = createStats();
@@ -161,11 +208,18 @@ function init() {
   // loading texture and creating avaiable cubes for the scene
   loadCubes();
 
+  initAnimations();
+
   createScene();
 
   start_time = Date.now();
   moveWorld = false;
 
+  document.addEventListener("keyup", e =>{
+    if(e.key == " "){
+      animateOrStopWorld();
+    }
+  });
   updateWorld();
 }
 
@@ -179,4 +233,8 @@ function updateWorld() {
 
 function renderWorld() {
   renderer.render(scene, camera);
+}
+
+function animateOrStopWorld() {
+  moveWorld = !moveWorld;
 }

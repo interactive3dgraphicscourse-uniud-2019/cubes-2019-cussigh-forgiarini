@@ -71,15 +71,15 @@ function createLights() {
     dirLight = createDirectionalLight({
         color: rgbToHex(255, 255, 255),
         intensity: 1,
-        position: new THREE.Vector3(100,50,0),
+        position: new THREE.Vector3(50,25,0),
         shadow: {
             enabled: false,
             width: 1024,
             height: 1024
         }
     });
-    scene.add(dirLight);
+    //scene.add(dirLight);
     
-    var helper = new THREE.CameraHelper(dirLight.shadow.camera);
-    scene.add(helper);
+    //var helper = new THREE.CameraHelper(dirLight.shadow.camera);
+    //scene.add(helper);
 }

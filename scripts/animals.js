@@ -43,9 +43,10 @@ function createBigDuck(color, position) {
  * 
  * @param {*} color    color name of the duck
  * @param {*} position 3VECTOR position
+ * @param {Boolean} center flag to center duck also in y axes
  */
 
-function createDuck(color, position) {
+function createDuck(color, position, center) {
     idColor = getBlockPosition(color);
     let duck = new THREE.Object3D();
     let feet = new THREE.Object3D();
@@ -70,7 +71,11 @@ function createDuck(color, position) {
     feet.add(createRectangle({ x: 1, z: 2 }, { color1: "wool_colored_orange" }, { x: 1, y: 0, z: 0.5 }));
     duck.add(feet);
 
-    duck.position.set(position.x, position.y, position.z);
+    if (center) {
+        duck.position.set(0, -2, -1);
+    }
+
+    duck.position.add(position);
     return duck;
 }
 
