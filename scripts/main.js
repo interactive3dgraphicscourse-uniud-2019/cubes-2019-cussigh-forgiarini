@@ -97,17 +97,17 @@ function createScene() {
 
   //scene.add(windmill);
   
-  let pig = createPig("wool_colored_light_pink" ,new THREE.Vector3(0, 0.5, 0));
+  let pig = createPig("wool_colored_light_pink" ,new THREE.Vector3(30, 0.5, 50));
   let recintoData = {
     dimensions:{
       x: 40,
       y: 1,
-      z: 40,
+      z: 80,
     },
     position: {
-      x:0,
+      x:20,
       y:0,
-      z:0
+      z:70
     }
   };
   let recinto = createRing(recintoData.dimensions, {color1:"wool_colored_brown"}, recintoData.position);

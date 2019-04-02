@@ -61,27 +61,52 @@ function animateWorld() {
             simpleRotations[i].object3D.matrixAutoUpdate = false;
         }
 
-        for(let i=0; i<movingOBJInsideContainers.length; i++){
+        for (let i = 0; i < movingOBJInsideContainers.length; i++) {
             let obj = movingOBJInsideContainers[i].object3D;
             let velocity = movingOBJInsideContainers[i].velocity;
             let containerData = movingOBJInsideContainers[i].containerData;
+            let collisionFix = movingOBJInsideContainers[i].collisionFix;
 
             obj.position.add(velocity);
-            if(obj.position.x >= containerData.position.x+containerData.dimensions.x/2){
+            if (obj.position.x > containerData.position.x + containerData.dimensions.x / 2 - collisionFix) {
+                let oldVelocity = velocity.clone();
                 movingOBJInsideContainers[i].velocity.multiply(new THREE.Vector3(-1, 1, 1));
-                obj.rotateOnAxis(Y_AXIS, Z_AXIS.angleTo(velocity));
+                let angle = oldVelocity.angleTo(movingOBJInsideContainers[i].velocity);
+                if (movingOBJInsideContainers[i].velocity.z > 0) {
+                    obj.rotateOnAxis(Y_AXIS, -angle);
+                } else {
+                    obj.rotateOnAxis(Y_AXIS, angle);
+                }
             }
-            if(obj.position.x <= containerData.position.x-containerData.dimensions.x/2){
+            if (obj.position.x < containerData.position.x - containerData.dimensions.x / 2 + collisionFix) {
+                let oldVelocity = velocity.clone();
                 movingOBJInsideContainers[i].velocity.multiply(new THREE.Vector3(-1, 1, 1));
-                obj.rotateOnAxis(Y_AXIS, Z_AXIS.angleTo(velocity));
+                let angle = oldVelocity.angleTo(movingOBJInsideContainers[i].velocity);
+                if (movingOBJInsideContainers[i].velocity.z > 0) {
+                    obj.rotateOnAxis(Y_AXIS, angle);
+                } else {
+                    obj.rotateOnAxis(Y_AXIS, -angle);
+                }
             }
-            if(obj.position.z >= containerData.position.z+containerData.dimensions.z/2){
+            if (obj.position.z > containerData.position.z + containerData.dimensions.z / 2 - collisionFix) {
+                let oldVelocity = velocity.clone();
                 movingOBJInsideContainers[i].velocity.multiply(new THREE.Vector3(1, 1, -1));
-                obj.rotateOnAxis(Y_AXIS, Z_AXIS.angleTo(velocity));
+                let angle = oldVelocity.angleTo(movingOBJInsideContainers[i].velocity);
+                if (movingOBJInsideContainers[i].velocity.x > 0) {
+                    obj.rotateOnAxis(Y_AXIS, angle);
+                } else {
+                    obj.rotateOnAxis(Y_AXIS, -angle);
+                }
             }
-            if(obj.position.z <= containerData.position.z-containerData.dimensions.z/2){
+            if (obj.position.z < containerData.position.z - containerData.dimensions.z / 2 + collisionFix) {
+                let oldVelocity = velocity.clone();
                 movingOBJInsideContainers[i].velocity.multiply(new THREE.Vector3(1, 1, -1));
-                obj.rotateOnAxis(Y_AXIS, Z_AXIS.angleTo(velocity));
+                let angle = oldVelocity.angleTo(movingOBJInsideContainers[i].velocity);
+                if (movingOBJInsideContainers[i].velocity.x > 0) {
+                    obj.rotateOnAxis(Y_AXIS, -angle);
+                } else {
+                    obj.rotateOnAxis(Y_AXIS, angle);
+                }
             }
         }
     }
@@ -166,6 +191,7 @@ function moveObjectInsideContainer(object3D, containerData, velocity) {
     movingOBJInsideContainers.push({
         object3D: object3D,
         containerData: containerData,
-        velocity: velocity
+        velocity: velocity,
+        collisionFix: 4
     });
 }
