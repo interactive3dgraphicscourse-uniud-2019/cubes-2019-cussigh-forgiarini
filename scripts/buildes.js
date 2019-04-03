@@ -1,30 +1,3 @@
-
-function createHouse(data) {
-
-    let width = data.width;
-    let height = data.height;
-    let depth = data.depth;
-    let roofHeight = data.roofHeight;
-    let windowsNumber = data.windowsNumber;
-    let chimney = data.chimney;
-
-    let house = new THREE.Object3D();
-
-    let floor = new THREE.Object3D();
-    let i, j, k;
-    for (i = 0; i < width; i++) {
-        for (j = 0; j < depth; j++) {
-            let obj = new THREE.Object3D();
-            obj.add(availableCubes[0].cube.clone());
-            obj.position.set(i - width / 2 + 0.5, 0, j - depth / 2 + 0.5);
-            floor.add(obj);
-        }
-    }
-    floor.position.set(0, 0, 0);
-    house.add(floor);
-    return house;
-}
-
 /**
  * Create a stable using passed data.
  * 
@@ -113,6 +86,19 @@ function createRoof(data) {
 }
 
 
+
+/**
+ * Create a windmill using passed data
+ * @param {Object} data 
+ * @param {Number} data.width            value of width
+ * @param {Number} data.height           value of height
+ * @param {Number} data.depth            value of depth
+ * @param {Object} data.colors           3VECTOR of the position of the windmill
+ * @param {String} data.colors.color1    color1
+ * @param {String} data.colors.color2    color2
+ * @param {Number} data.colors.variance  color2 proportion from 0 to 10
+ * @param {Object} data.position         3VECTOR of the position of the windmill
+ */
 function createWindmill(data) {
     let width = data.width;
     let height = data.height;

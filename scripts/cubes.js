@@ -59,7 +59,8 @@ function loadCubes() {
         "light_pink",
         "test",
         "light_brown",
-        "beige"
+        "beige",
+        "light_green"
     ];
     loadWools(loader, geometry, woolColors);
 }

@@ -34,6 +34,7 @@ function getHeightData(img,scale) {
 
 /**
  * returns terrain
+ * scales double the size of standard cubes
  */
 function createTerrain() {
 
@@ -41,7 +42,7 @@ function createTerrain() {
     let terrain = new THREE.Object3D();
 
     var img = new Image();
-    img.src = "heightMap/heightmap3.png";
+    img.src = "heightMap/heightmap4.png";
 
  
 
@@ -132,18 +133,25 @@ function createTerrain() {
                 }
             }
         }
-
+        terrain.scale.set(2,2,2);
+        terrain.position.set(-sizeX, -sizeY + 0.5, -sizeZ);
     }
-
     return terrain;
 }
 
+/**
+ * returns a color name from a 6-color palette based on how high is the number
+ * 
+ * @param {Number} value considered
+ * @param {Number} min bound of value
+ * @param {Number} max bound of value
+ */
 function mapColor(value, min, max) {
 
     let color = ["wool_colored_cyan",
             "wool_colored_emerald",
-            "wool_colored_turquoise",
             "wool_colored_green",
+            "wool_colored_light_green",
             "wool_colored_lime",
             "wool_colored_white"]
 

@@ -74,15 +74,14 @@ let cowContainer;
 
 function createScene() {
   // GROUND
-  createGround();
+  //createGround();
   createLights();
 
   let windmill = createWindmill({
     width: 8, height: 20, depth: 12,
     colors: { color1: "wool_colored_light_brown", color2: "wool_colored_cyan" },
-    position: { x: -21, y: 0, z: -14 }
+    position: { x: -21, y: 8, z: -14 }
   });
-  //windmill.scale.set(2, 2, 2);
   windmill.rotateOnAxis(Y_AXIS, -Math.PI/4);
   scene.add(windmill);
 
@@ -149,32 +148,28 @@ function createScene() {
     speed: 10,
   });
 
-  let cow_1 = createCow({ color1: "wool_colored_brown", color2: "wool_colored_white", variance: 9 }, {x:30,y:0,z:-15});
+  let cow_1 = createCow({ color1: "wool_colored_brown", color2: "wool_colored_white", variance: 9 }, {x:30,y:0,z:-10});
   scene.add(cow_1);
   cow_1.scale.set(0.7,0.7,0.7);
-  let cow_2 = createCow({ color1: "wool_colored_brown", color2: "wool_colored_white", variance: 7 }, {x:20,y:0,z:-15});
+  let cow_2 = createCow({ color1: "wool_colored_brown", color2: "wool_colored_white", variance: 7 }, {x:20,y:0,z:-3});
   scene.add(cow_2);
-  cow_2.scale.set(0.7,0.7,0.7);
-  return;
+  cow_2.scale.set(0.7,0.7,0.7);   
   let pines = [];
 
   let pineColor = { color1: "wool_colored_emerald", color2: "wool_colored_turquoise", variance: 5 };
 
-  pines.push(createPine({ x: 4, y: 20, z: 4 }, pineColor, { x: -5, y: 0, z: -4 }));
-  pines.push(createPine({ x: 5, y: 6, z: 3 }, pineColor, { x: -10, y: 0, z: 2 }));
-  pines.push(createPine({ x: 8, y: 15, z: 8 }, pineColor, { x: -20, y: 0, z: 0 }));
-  pines.push(createPine({ x: 15, y: 20, z: 15 }, pineColor, { x: 0, y: 0, z: 30 }));
-  pines.push(createPine({ x: 15, y: 40, z: 17 }, pineColor, { x: 30, y: 0, z: 30 }));
-
-  pines.forEach(pine => {
+  pines.push(createPine({ x: 7, y: 20, z: 6 }, pineColor,  {x:26,y:0,z:10}));
+  pines.push(createPine({ x: 3, y: 12, z: 4 }, pineColor,  {x:30,y:0,z:18}));
+  pines.push(createPine({ x: 3, y: 12, z: 4 }, pineColor,  {x:-12,y:8,z:-20}));
+  pines.push(createPine({ x: 3, y: 7, z: 4 }, pineColor,  {x:-30,y:8,z:-3}));
+   pines.forEach(pine => {
     scene.add(pine);
-  });
+  }); 
 
 
 
-  //  let terrain = createTerrain();
-  //  scene.add(terrain);
-
+  let terrain = createTerrain();
+  scene.add(terrain);
 
 
 }

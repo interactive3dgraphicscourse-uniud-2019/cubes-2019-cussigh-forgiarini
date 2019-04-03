@@ -65,6 +65,9 @@ function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
+/**
+ * Return if (i,j) is a valid couple of index for a bidimensional array of size [mi-1][mj-1]
+ */
 function inBound2(i, j, mi, mj) {
     return ((i >= 0) && (i <= mi) && (j >= 0) && (j <= mj));
 }

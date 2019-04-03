@@ -51,3 +51,10 @@ Create le funzioni per generare stalle e tetti, parametriche su dimensioni e col
 =============
 Creata la funzione per generare il mulino, parametrica su dimensioni e colore. Predisposta all'animazione sulle pale.
 
+01.04.2019
+=============
+Creata la funzione per generare il terreno a partire da un'immagine in scala di grigi
+
+03.04.2019
+=============
+Creata la scena
