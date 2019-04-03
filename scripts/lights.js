@@ -73,13 +73,13 @@ function createLights() {
         intensity: 1,
         position: new THREE.Vector3(50,25,0),
         shadow: {
-            enabled: false,
+            enabled: true,
             width: 1024,
             height: 1024
         }
     });
-    //scene.add(dirLight);
+    scene.add(dirLight);
     
-    //var helper = new THREE.CameraHelper(dirLight.shadow.camera);
-    //scene.add(helper);
+    var helper = new THREE.CameraHelper(dirLight.shadow.camera);
+    scene.add(helper);
 }

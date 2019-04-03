@@ -150,7 +150,7 @@ function createWindmill(data) {
     //blades
     let blades = new THREE.Object3D();
     let bladeDepth = Math.floor((depth - 4)/2);
-    if (bladeDepth%2==0) bladesDepth--;
+    if (bladeDepth%2==0) bladeDepth--;
     let bladeHeight = Math.floor(columnHeight/2);
     let blade1 = new THREE.Object3D();
 
