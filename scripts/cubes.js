@@ -38,25 +38,25 @@ function loadCubes() {
 
     // wools color to load
     let woolColors = [
-        "black",      //0
-        "blue",       //1
-        "brown",      //2
-        "cyan",       //3
-        "gray",       //4
-        "green",      //5
-        "light_blue", //6
-        "lime",       //7
-        "magenta",    //8
-        "orange",     //9
-        "pink",       //10
-        "purple",     //11
-        "red",        //12
-        "silver",     //13
-        "white",      //14
-        "yellow",     //15
-        "turquoise",  //16
-        "emerald",    //17
-        "light_pink",  //18
+        "black", 
+        "blue",
+        "brown",
+        "cyan",
+        "gray",
+        "green",
+        "light_blue",
+        "lime",
+        "magenta",
+        "orange",
+        "pink",
+        "purple",
+        "red",
+        "silver",
+        "white",
+        "yellow",
+        "turquoise",
+        "emerald",
+        "light_pink",
         "test",
         "light_brown",
         "beige"
@@ -75,8 +75,6 @@ function getBlockPosition(name) {
     }
     return -1;
 }
-
-
 
 function drawAvailableCubes(position) {
     let side = Math.ceil(Math.sqrt(availableCubes.length));
@@ -157,11 +155,12 @@ function createRectangle(dimensions, colorData, position) {
 
 /**Creates a ring of boxes (a cylinder without top and bottom faces)
  * 
- * @param {*} dimensions    3VECTOR of ring's dimensions
- * @param {*} colorData     {color1, color2, variance} 
- *                          color1-2 are the name of the colors
- *                          variance is the color2 presence from 0 (none) to 10 (equal to color1)
- * @param {*} position      3VECTOR of ring's position
+ * @param {Object} dimensions    3VECTOR of ring's dimensions
+ * @param {Object} colorData     {color1, color2, variance} 
+ * @param {String} colorData.color1 name of the color
+ * @param {String} colorData.color2 name of the color
+ * @param {Number} colorData.variance is the color2 presence from 0 (none) to 10 (equal to color1)
+ * @param {Object} position      3VECTOR of ring's position
  */
 function createRing(dimensions, colorData, position) {
     let width = dimensions.x;

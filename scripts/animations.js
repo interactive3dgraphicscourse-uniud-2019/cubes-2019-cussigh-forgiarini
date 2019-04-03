@@ -1,11 +1,13 @@
 let sphereRotations;
 let simpleRotations;
 let movingOBJInsideContainers;
+let oldTimeAnimations;
 
 function initAnimations() {
     sphereRotations = [];
     simpleRotations = [];
     movingOBJInsideContainers = [];
+    oldTimeAnimations = Date.now();
 }
 
 function addSimpleRotation(rotationVector, object3D, time) {
@@ -16,26 +18,37 @@ function addSimpleRotation(rotationVector, object3D, time) {
     });
 }
 
+let milliseconds_elapsed;
+let time_elapsed;
+
+function enableAnimations() {
+    moveWorld = true;
+    start_time = Date.now();
+}
+
 function animateWorld() {
-    if (moveWorld) {
-        let milliseconds_elapsed = Date.now() - start_time;
+    milliseconds_elapsed = Date.now() - start_time;
+    time_elapsed = milliseconds_elapsed - oldTimeAnimations;
+
+    if (moveWorld && time_elapsed > 0) {
 
         // sphere animations
         for (let i = 0; i < sphereRotations.length; i++) {
-            sphereRotations[i].container.matrix.makeRotationAxis(
-                sphereRotations[i].rotationVector,
-                mapValues(milliseconds_elapsed % sphereRotations[i].rotationTime, 0, sphereRotations[i].rotationTime - 1, 2 * Math.PI, 0)
-            );
-            sphereRotations[i].container.matrixAutoUpdate = false;
 
+            // rotate object inside sphere
+            let angle = time_elapsed / sphereRotations[i].rotationTime * 2 * Math.PI;
+            sphereRotations[i].container.rotateOnAxis(sphereRotations[i].rotationVector, -angle);
+
+            // applying sin movement
             if (sphereRotations[i].sinMovement) {
+                sphereRotations[i].sinCurrentValue += time_elapsed / sphereRotations[i].sinTime * 2 * Math.PI;
+
                 let sinVector = new THREE.Vector3(
                     0,
-                    Math.sin(
-                        mapValues(milliseconds_elapsed % sphereRotations[i].sinTime, 0, sphereRotations[i].sinTime - 1, 0, 2 * Math.PI)
-                    ) * sphereRotations[i].sinMultiplier,
+                    Math.sin(sphereRotations[i].sinCurrentValue) * sphereRotations[i].sinMultiplier,
                     0
                 );
+
                 sinVector.applyAxisAngle(X_AXIS, -sphereRotations[i].angleX);
                 sinVector.applyAxisAngle(Z_AXIS, -sphereRotations[i].angleZ);
 
@@ -48,68 +61,77 @@ function animateWorld() {
         }
 
         for (let i = 0; i < simpleRotations.length; i++) {
-            simpleRotations[i].object3D.matrix.makeRotationAxis(
-                simpleRotations[i].rotationVector,
-                mapValues(
-                    milliseconds_elapsed % simpleRotations[i].rotationTime,
-                    0,
-                    simpleRotations[i].rotationTime - 1,
-                    0,
-                    2 * Math.PI
-                )
-            );
-            simpleRotations[i].object3D.matrixAutoUpdate = false;
+            let angle = time_elapsed / simpleRotations[i].rotationTime * 2 * Math.PI;
+            simpleRotations[i].object3D.rotateOnAxis(simpleRotations[i].rotationVector, angle);
         }
 
         for (let i = 0; i < movingOBJInsideContainers.length; i++) {
             let obj = movingOBJInsideContainers[i].object3D;
-            let velocity = movingOBJInsideContainers[i].velocity;
             let containerData = movingOBJInsideContainers[i].containerData;
             let collisionFix = movingOBJInsideContainers[i].collisionFix;
+            let direction = movingOBJInsideContainers[i].directionVector;
+            let speed = movingOBJInsideContainers[i].speed;
 
-            obj.position.add(velocity);
-            if (obj.position.x > containerData.position.x + containerData.dimensions.x / 2 - collisionFix) {
-                let oldVelocity = velocity.clone();
-                movingOBJInsideContainers[i].velocity.multiply(new THREE.Vector3(-1, 1, 1));
-                let angle = oldVelocity.angleTo(movingOBJInsideContainers[i].velocity);
-                if (movingOBJInsideContainers[i].velocity.z > 0) {
+            // checking if object is out of bounds
+            // right wall
+            if (direction.x > 0 && (obj.position.x > containerData.position.x + containerData.dimensions.x / 2 - collisionFix)) {
+                let oldDirection = direction.clone();
+                let wallAngle = Math.acos(oldDirection.x);
+                movingOBJInsideContainers[i].directionVector.x = -Math.cos(wallAngle);
+                let angle = oldDirection.angleTo(movingOBJInsideContainers[i].directionVector);
+                if (movingOBJInsideContainers[i].directionVector.z > 0) {
                     obj.rotateOnAxis(Y_AXIS, -angle);
                 } else {
                     obj.rotateOnAxis(Y_AXIS, angle);
                 }
             }
-            if (obj.position.x < containerData.position.x - containerData.dimensions.x / 2 + collisionFix) {
-                let oldVelocity = velocity.clone();
-                movingOBJInsideContainers[i].velocity.multiply(new THREE.Vector3(-1, 1, 1));
-                let angle = oldVelocity.angleTo(movingOBJInsideContainers[i].velocity);
-                if (movingOBJInsideContainers[i].velocity.z > 0) {
+            // left wall
+            if (direction.x < 0 && (obj.position.x < containerData.position.x - containerData.dimensions.x / 2 + collisionFix)) {
+                let oldDirection = direction.clone();
+                let wallAngle = Math.acos(oldDirection.x);
+                movingOBJInsideContainers[i].directionVector.x = -Math.cos(wallAngle);
+                let angle = oldDirection.angleTo(movingOBJInsideContainers[i].directionVector);
+                if (movingOBJInsideContainers[i].directionVector.z > 0) {
                     obj.rotateOnAxis(Y_AXIS, angle);
                 } else {
                     obj.rotateOnAxis(Y_AXIS, -angle);
                 }
             }
-            if (obj.position.z > containerData.position.z + containerData.dimensions.z / 2 - collisionFix) {
-                let oldVelocity = velocity.clone();
-                movingOBJInsideContainers[i].velocity.multiply(new THREE.Vector3(1, 1, -1));
-                let angle = oldVelocity.angleTo(movingOBJInsideContainers[i].velocity);
-                if (movingOBJInsideContainers[i].velocity.x > 0) {
+            // top wall
+            if (direction.z > 0 && (obj.position.z > containerData.position.z + containerData.dimensions.z / 2 - collisionFix)) {
+                let oldDirection = direction.clone();
+                let wallAngle = Math.asin(oldDirection.z);
+                movingOBJInsideContainers[i].directionVector.z = -Math.sin(wallAngle);
+                let angle = oldDirection.angleTo(movingOBJInsideContainers[i].directionVector);
+                if (movingOBJInsideContainers[i].directionVector.x > 0) {
                     obj.rotateOnAxis(Y_AXIS, angle);
                 } else {
                     obj.rotateOnAxis(Y_AXIS, -angle);
                 }
             }
-            if (obj.position.z < containerData.position.z - containerData.dimensions.z / 2 + collisionFix) {
-                let oldVelocity = velocity.clone();
-                movingOBJInsideContainers[i].velocity.multiply(new THREE.Vector3(1, 1, -1));
-                let angle = oldVelocity.angleTo(movingOBJInsideContainers[i].velocity);
-                if (movingOBJInsideContainers[i].velocity.x > 0) {
+            // bottom wall
+            if (direction.z < 0 && (obj.position.z < containerData.position.z - containerData.dimensions.z / 2 + collisionFix)) {
+                let oldDirection = direction.clone();
+                let wallAngle = Math.asin(oldDirection.z);
+                movingOBJInsideContainers[i].directionVector.z = -Math.sin(wallAngle);
+                let angle = oldDirection.angleTo(movingOBJInsideContainers[i].directionVector);
+                if (movingOBJInsideContainers[i].directionVector.x > 0) {
                     obj.rotateOnAxis(Y_AXIS, -angle);
                 } else {
                     obj.rotateOnAxis(Y_AXIS, angle);
                 }
             }
+
+            // moving object
+            let positionVector = new THREE.Vector3(
+                direction.x * speed * time_elapsed / 1000,
+                direction.y,
+                direction.z * speed * time_elapsed / 1000
+            );
+            obj.position.add(positionVector);
         }
     }
+    oldTimeAnimations = milliseconds_elapsed;
 }
 
 /**
@@ -138,7 +160,7 @@ function createCicleSphereAnimation(data) {
 
     let objectToAnimateWrapper = new THREE.Object3D();
     objectToAnimateWrapper.add(radiusWrapper);
-    
+
     let vectorX = new THREE.Vector3(0, rotationVector.y, rotationVector.z);
     let angleX;
     if (vectorX.x == 0 && vectorX.y == 0 && vectorX.z == 0) {
@@ -181,17 +203,25 @@ function createCicleSphereAnimation(data) {
         angleZ: angleZ,
         rotationTime: data.rotationTime,
         sinTime: data.sinTime,
-        sinMultiplier: data.sinMultiplier
+        sinMultiplier: data.sinMultiplier,
+        sinCurrentValue: 0
     });
     return animationWrapper;
 }
 
-function moveObjectInsideContainer(object3D, containerData, velocity) {
-    object3D.rotateOnAxis(Y_AXIS, Z_AXIS.angleTo(velocity));
+function moveObjectInsideContainer(data) {
+    let object3D = data.obj;
+    let bounderies = data.bounderies;
+    let fixBounderies = data.fixBounderies;
+    let directionVector = data.directionVector;
+    let speed = data.speed;
+
+    object3D.rotateOnAxis(Y_AXIS, Z_AXIS.angleTo(directionVector));
     movingOBJInsideContainers.push({
         object3D: object3D,
-        containerData: containerData,
-        velocity: velocity,
-        collisionFix: 4
+        containerData: bounderies,
+        directionVector: directionVector,
+        speed: speed,
+        collisionFix: fixBounderies
     });
 }

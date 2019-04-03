@@ -65,10 +65,10 @@ function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
-function inBound2(i,j, mi, mj) {
-    if ((i>=0)&&(i<=mi)&&(j>=0)&&(j<=mj)) return true;
-    else return false;
+function inBound2(i, j, mi, mj) {
+    return ((i >= 0) && (i <= mi) && (j >= 0) && (j <= mj));
 }
+
 /**
  * Converts an angle in degrees in the corrisponding angle in radians
  * 
