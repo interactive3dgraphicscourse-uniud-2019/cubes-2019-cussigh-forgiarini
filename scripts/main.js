@@ -59,7 +59,7 @@ function createScene() {
 
   let windmill = createWindmill({
     width: 8, height: 20, depth: 12,
-    colors: { color1: "wool_colored_light_brown", color2: "wool_colored_cyan" },
+    colors: { color1: "wool_colored_light_brown", color2: "wool_colored_red" },
     position: { x: -21, y: 8, z: -14 }
   });
   windmill.rotateOnAxis(Y_AXIS, -Math.PI/4);
