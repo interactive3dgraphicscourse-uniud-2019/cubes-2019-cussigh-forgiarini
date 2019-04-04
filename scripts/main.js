@@ -1,4 +1,3 @@
-/* 
 let controls, stats;
 
 /**
@@ -54,27 +53,8 @@ function createCamera(position, lookAt) {
   camera.lookAt(lookAt);
 }
 
-function createGround() {
-  let groundGeo = new THREE.PlaneBufferGeometry(10000, 10000);
-  let groundMat = new THREE.MeshPhongMaterial({
-    color: 0xffffff,
-    specular: 0x050505
-  });
-  groundMat.color.setHSL(0.095, 1, 0.75);
-
-  let ground = new THREE.Mesh(groundGeo, groundMat);
-  ground.position.y = -0.5;
-  ground.rotation.x = -Math.PI / 2;
-  ground.receiveShadow = true;
-  scene.add(ground);
-}
-
-let cowWrapper;
-let cowContainer;
-
 function createScene() {
   // GROUND
-  //createGround();
   createLights();
 
   let windmill = createWindmill({
@@ -173,10 +153,13 @@ function createScene() {
 
 function init() {
   scene = new THREE.Scene();
-  show_debug_tools = false;
+  show_debug_tools = true;
   createRenderer();
 
   createCamera(new THREE.Vector3(10, 10, 20));
+
+  // controls for camera
+  createControls();
 
   // creating stats of frame
   if(show_debug_tools){
@@ -184,9 +167,6 @@ function init() {
     // uncomment if you need to draw coordinate axes when building the scene
     Coordinates.drawAllAxes();
   }
-
-  // controls for camera
-  createControls();
 
   // add listener for resize event of window to update renderer
   window.addEventListener("resize", resizeListener, false);

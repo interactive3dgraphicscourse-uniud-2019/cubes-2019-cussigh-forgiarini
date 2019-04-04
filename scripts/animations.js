@@ -1,12 +1,14 @@
 let sphereRotations;
 let simpleRotations;
 let movingOBJInsideContainers;
+let lineAnimations;
 let oldTimeAnimations;
 
 function initAnimations() {
     sphereRotations = [];
     simpleRotations = [];
     movingOBJInsideContainers = [];
+    lineAnimations = [];
     oldTimeAnimations = Date.now();
 }
 
@@ -130,6 +132,10 @@ function animateWorld() {
             );
             obj.position.add(positionVector);
         }
+
+        for(let i=0; i<lineAnimations.length; i++){
+            ;
+        }
     }
     oldTimeAnimations = milliseconds_elapsed;
 }
@@ -141,7 +147,7 @@ function animateWorld() {
  * @param {Object} data.objectToAnimate THREE.Object3D to animate
  * @param {Object} data.spherePosition position of center of sphere
  * @param {Number} data.radius radius of rotation
- * @param {Object} data.rotationVector vector indicating plane of rotation
+ * @param {Object} data.rotationVector vector indicating the ortogonal plane of rotation
  * @param {Boolean} data.sinMovement flag to enable sin vertical movevement
  * @param {Number} data.rotationTime milliseconds to complete one rotation
  * @param {Number} data.sinTime milliseconds to complete sin cicle
@@ -223,5 +229,23 @@ function moveObjectInsideContainer(data) {
         directionVector: directionVector,
         speed: speed,
         collisionFix: fixBounderies
+    });
+}
+/**
+ * Takes an object3D and add to him a line animation from point A to point B.
+ * 
+ * @param {Object} data Data for the function
+ * @param {Object} data.from THREE.Object3D to animate
+ * @param {Object} data.to position of center of sphere
+ * @param {Number} data.speed radius of rotation
+ * @param {Object} data.cosMovement vector indicating the ortogonal plane of rotation
+ * @param {Boolean} data.cosTime flag to enable sin vertical movevement
+ * @param {Number} data.cosMultiplier multiplier for sin height
+ */
+
+function createLineAnimation(data) {
+
+    lineAnimations.push({
+
     });
 }
