@@ -98,6 +98,7 @@ function createTerrain() {
 
         //fills the gaps where terrain is misaligned, checking the lowest height neighbour of each block
         let altezza, a1, a2, a3, a4;
+        let color;
         for (let i = 0; i < sizeX; i++) {
             for (let j = 0; j < sizeZ; j++) {
                 altezza = heightsMatrix[i][j];
@@ -116,8 +117,14 @@ function createTerrain() {
                 minNeigh = Math.min(a1, a2, a3, a4);
                 if (minNeigh < altezza - 1) {
                     for (let h = 0; h < altezza - minNeigh - 1; h++) {
+                        // if terrain is water, color is uniform
+                        // else added cubes are brown
+                        if ((Math.floor(mapValues(altezza - h - 1, 0, sizeY, 0, 6))) < 2){
+                            color = mapColor(altezza - h - 1,0, sizeY);
+                        }
+                        else color = "wool_colored_brown";
                         terrainMatrix[i][altezza - h - 1][j] = createBlock(
-                            "wool_colored_brown",
+                            color,
                             { x: i, y: altezza - h - 1, z: j }
                         );
                     }
