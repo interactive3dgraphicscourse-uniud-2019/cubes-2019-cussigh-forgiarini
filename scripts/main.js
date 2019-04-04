@@ -166,24 +166,24 @@ function createScene() {
     scene.add(pine);
   }); 
 
-
-
   let terrain = createTerrain();
   scene.add(terrain);
-
 
 }
 
 function init() {
   scene = new THREE.Scene();
+  show_debug_tools = false;
   createRenderer();
 
   createCamera(new THREE.Vector3(10, 10, 20));
 
   // creating stats of frame
-  stats = createStats();
-  // uncomment if you need to draw coordinate axes when building the scene
-  Coordinates.drawAllAxes();
+  if(show_debug_tools){
+    stats = createStats();
+    // uncomment if you need to draw coordinate axes when building the scene
+    Coordinates.drawAllAxes();
+  }
 
   // controls for camera
   createControls();
@@ -213,7 +213,9 @@ function updateWorld() {
   requestAnimationFrame(updateWorld);
   animateWorld();
   controls.update();
-  stats.update();
+  if(show_debug_tools){
+    stats.update();
+  }
   renderWorld();
 }
 

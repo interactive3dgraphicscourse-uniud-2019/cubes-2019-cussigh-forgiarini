@@ -65,7 +65,7 @@ function createTerrain() {
 
         //get height data from img
         var data = getHeightData(img, 1);
-        console.log(data);
+        // console.log(data);
 
         //converts data matrix in int of wished range 
         for (let i = 0; i < data.length; i++) {

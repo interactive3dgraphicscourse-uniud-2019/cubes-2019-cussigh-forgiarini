@@ -80,6 +80,8 @@ function createLights() {
     });
     scene.add(dirLight);
     
-    var helper = new THREE.CameraHelper(dirLight.shadow.camera);
-    scene.add(helper);
+    if(show_debug_tools){
+        var helper = new THREE.CameraHelper(dirLight.shadow.camera);
+        scene.add(helper);
+    }
 }
