@@ -43,14 +43,13 @@ function createDirectionalLight(data) {
     dirLight.position.set(data.position.x, data.position.y, data.position.z);
 
     if (data.shadow.enabled) {
-        var d = 100;
         dirLight.castShadow = true;
-        dirLight.shadow.camera.left = - d;
-        dirLight.shadow.camera.right = d;
-        dirLight.shadow.camera.top = d;
-        dirLight.shadow.camera.bottom = - d;
+        dirLight.shadow.camera.left = - 40;
+        dirLight.shadow.camera.right = 40;
+        dirLight.shadow.camera.top = 40;
+        dirLight.shadow.camera.bottom = - 25;
         dirLight.shadow.camera.near = 1;
-        dirLight.shadow.camera.far = 150;
+        dirLight.shadow.camera.far = 100;
         dirLight.shadow.mapSize.x = 1024;
         dirLight.shadow.mapSize.y = 1024;
 
