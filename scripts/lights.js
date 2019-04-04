@@ -48,8 +48,8 @@ function createDirectionalLight(data) {
         dirLight.shadow.camera.right = 40;
         dirLight.shadow.camera.top = 40;
         dirLight.shadow.camera.bottom = - 25;
-        dirLight.shadow.camera.near = 1;
-        dirLight.shadow.camera.far = 100;
+        dirLight.shadow.camera.near = 3;
+        dirLight.shadow.camera.far = 98;
         dirLight.shadow.mapSize.x = 1024;
         dirLight.shadow.mapSize.y = 1024;
 

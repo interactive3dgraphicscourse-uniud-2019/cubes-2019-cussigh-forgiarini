@@ -81,3 +81,38 @@ function inBound2(i, j, mi, mj) {
 function degToRad(deg) {
     return deg * (Math.PI / 180)
 }
+/**
+ * Checks if a vector calculating his distance to the vector (2^-52, 2^-52, 2^-52).
+ * If distance is less returns true, otherwise false.
+ * 
+ * @param {Object} vector 3d vector to check
+ * @returns {Boolean} true if vector is a null vector, false otheriwise
+ */
+function isNullVector(vector) {
+    return (Math.abs(vector.x) < Number.EPSILON)
+        && (Math.abs(vector.y) < Number.EPSILON)
+        && (Math.abs(vector.z) < Number.EPSILON);
+}
+
+/**
+ * Checks if an object is going to a target position (in a line)
+ * If object is hover target returns false.
+ * 
+ * @param {Object} currPosition 3d Vector of current position
+ * @param {Object} direction 3d Vector of object direction
+ * @param {Object} destPosition 3d Vector of target position
+ * @returns {Boolean} true if is going to hit, false otherwise
+ */
+function isOBJMovingTo(currPosition, direction, destPosition) {
+    let calculatedDirection = new THREE.Vector3(
+        destPosition.x - currPosition.x,
+        destPosition.y - currPosition.y,
+        destPosition.z - currPosition.z 
+    );
+    
+    if (isNullVector(calculatedDirection)){
+        return false;
+    }
+
+    return (Math.abs(direction.angleTo(calculatedDirection)) < MAX_DIFFERENCE_ANGLE);
+}

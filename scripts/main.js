@@ -149,6 +149,18 @@ function createScene() {
   let terrain = createTerrain();
   scene.add(terrain);
 
+  let duck_lake = createDuck("wool_colored_yellow", { x: 0, y: 0, z: 0 }, true);
+  scene.add(createLineAnimation({
+    startingPosition: true,
+    objectToAnimate: duck_lake,
+    from: new THREE.Vector3(-20, 50, 20),
+    to: new THREE.Vector3(20, -50, 20),
+    bounce: true,
+    speed: 15,
+    cosMovement: false,
+    cosTime: 3000,
+    cosMultiplier: 4
+  }));
 }
 
 function init() {
@@ -177,9 +189,6 @@ function init() {
   initAnimations();
 
   createScene();
-
-  start_time = Date.now();
-  moveWorld = false;
 
   document.addEventListener("keyup", e =>{
     if(e.key == " "){

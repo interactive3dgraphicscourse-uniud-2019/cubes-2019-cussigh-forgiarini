@@ -2,31 +2,29 @@ let sphereRotations;
 let simpleRotations;
 let movingOBJInsideContainers;
 let lineAnimations;
-let oldTimeAnimations;
+let start_time;
 
 function initAnimations() {
     sphereRotations = [];
     simpleRotations = [];
     movingOBJInsideContainers = [];
     lineAnimations = [];
-    oldTimeAnimations = Date.now();
-}
-
-function addSimpleRotation(rotationVector, object3D, time) {
-    simpleRotations.push({
-        rotationVector: rotationVector,
-        object3D: object3D,
-        rotationTime: time
-    });
+    moveWorld = false;
 }
 
 let milliseconds_elapsed;
+let oldTimeAnimations;
 let time_elapsed;
 
 function enableAnimations() {
     moveWorld = true;
     start_time = Date.now();
+    oldTimeAnimations = Date.now();
 }
+
+/**
+ * Executes animations in world.
+ */
 
 function animateWorld() {
     milliseconds_elapsed = Date.now() - start_time;
@@ -126,15 +124,52 @@ function animateWorld() {
 
             // moving object
             let positionVector = new THREE.Vector3(
-                direction.x * speed * time_elapsed / 1000,
-                direction.y,
-                direction.z * speed * time_elapsed / 1000
+                movingOBJInsideContainers[i].directionVector.x * speed * time_elapsed / 1000,
+                movingOBJInsideContainers[i].directionVector.y,
+                movingOBJInsideContainers[i].directionVector.z * speed * time_elapsed / 1000
             );
             obj.position.add(positionVector);
         }
+        for (let i = 0; i < lineAnimations.length; i++) {
+            let obj = lineAnimations[i].obj3D;
+            // if both conditions are true, it means that object is going away from the two points, so it has to come back
+            if (!isOBJMovingTo(obj.position, lineAnimations[i].direction, lineAnimations[i].from) &&
+                !isOBJMovingTo(obj.position, lineAnimations[i].direction, lineAnimations[i].to)) {
+                    console.log("Bounce");
+                if (lineAnimations[i].bounce) {
+                    lineAnimations[i].direction.multiplyScalar(-1);
+                    obj.rotateOnAxis(lineAnimations[i].rotationAxis, Math.PI);
+                } else {
+                    lineAnimations[i].direction.multiplyScalar(0);
+                }
+            }
 
-        for(let i=0; i<lineAnimations.length; i++){
-            ;
+            //passed from point
+            obj.position.add(
+                lineAnimations[i].direction.clone().multiplyScalar(
+                    lineAnimations[i].speed * time_elapsed / 1000
+                )
+            );
+
+            // applying cos movement
+            if (lineAnimations[i].cosMovement) {
+                lineAnimations[i].cosCurrentValue += time_elapsed / lineAnimations[i].cosTime * 2 * Math.PI;
+
+                let cosVector = new THREE.Vector3(
+                    0,
+                    0,
+                    Math.cos(lineAnimations[i].cosCurrentValue) * lineAnimations[i].cosMultiplier,
+                );
+
+                cosVector.applyAxisAngle(X_AXIS, -lineAnimations[i].angleX);
+                cosVector.applyAxisAngle(Z_AXIS, -lineAnimations[i].angleZ);
+
+                lineAnimations[i].wrapper.position.set(
+                    lineAnimations[i].spherePosition.x + cosVector.x,
+                    lineAnimations[i].spherePosition.y + cosVector.y,
+                    lineAnimations[i].spherePosition.z + cosVector.z
+                );
+            }
         }
     }
     oldTimeAnimations = milliseconds_elapsed;
@@ -152,6 +187,7 @@ function animateWorld() {
  * @param {Number} data.rotationTime milliseconds to complete one rotation
  * @param {Number} data.sinTime milliseconds to complete sin cicle
  * @param {Number} data.sinMultiplier multiplier for sin height
+ * @returns {Object} THREE.Object3D container of animation
  */
 
 function createCicleSphereAnimation(data) {
@@ -169,7 +205,7 @@ function createCicleSphereAnimation(data) {
 
     let vectorX = new THREE.Vector3(0, rotationVector.y, rotationVector.z);
     let angleX;
-    if (vectorX.x == 0 && vectorX.y == 0 && vectorX.z == 0) {
+    if (isNullVector(vectorX)) {
         angleX = 0;
     } else {
         angleX = Y_AXIS.angleTo(vectorX);
@@ -177,7 +213,7 @@ function createCicleSphereAnimation(data) {
 
     let vectorZ = new THREE.Vector3(rotationVector.x, rotationVector.y, 0);
     let angleZ;
-    if (vectorZ.x == 0 && vectorZ.y == 0 && vectorZ.z == 0) {
+    if (isNullVector(vectorZ)) {
         angleZ = 0;
     } else {
         angleZ = Y_AXIS.angleTo(vectorZ);
@@ -215,6 +251,31 @@ function createCicleSphereAnimation(data) {
     return animationWrapper;
 }
 
+/**
+ * Add a rotation animation of an object around an axis passed.
+ * 
+ * @param {Object} rotationVector 3d vector to which object has to rotate
+ * @param {Object} object3D Object to animate
+ * @param {Number} time time of revolution around vector
+ */
+function addSimpleRotation(rotationVector, object3D, time) {
+    simpleRotations.push({
+        rotationVector: rotationVector,
+        object3D: object3D,
+        rotationTime: time
+    });
+}
+
+/**
+ * Add to passed object an animation inside a rectangle. Object will hit rectangle's walls and bounce with same angle.
+ * 
+ * @param {Object} data data for the function
+ * @param {Object} data.obj THREE.Object3D to animate
+ * @param {Object} data.bounderies 3d Vector of starting position
+ * @param {Number} data.fixBounderies 3d Vector of ending position
+ * @param {Object} data.directionVector 3d Vector for starting direction
+ * @param {Number} data.speed speed of object (units/s)
+ */
 function moveObjectInsideContainer(data) {
     let object3D = data.obj;
     let bounderies = data.bounderies;
@@ -231,21 +292,89 @@ function moveObjectInsideContainer(data) {
         collisionFix: fixBounderies
     });
 }
+
 /**
  * Takes an object3D and add to him a line animation from point A to point B.
+ * Assumes object is creating looking at 0,0,1.
+ * Object will look where it is going, same as direction from A to B or B to A.
  * 
  * @param {Object} data Data for the function
- * @param {Object} data.from THREE.Object3D to animate
- * @param {Object} data.to position of center of sphere
- * @param {Number} data.speed radius of rotation
- * @param {Object} data.cosMovement vector indicating the ortogonal plane of rotation
- * @param {Boolean} data.cosTime flag to enable sin vertical movevement
- * @param {Number} data.cosMultiplier multiplier for sin height
+ * @param {Boolean} data.startingPosition True if obj has to be in starting position, false if random in line
+ * @param {Object} data.objectToAnimate THREE.Object3D to animate
+ * @param {Object} data.from 3d Vector of starting position
+ * @param {Object} data.to 3d Vector of ending position
+ * @param {Boolean} data.bounce true if obj has to come back and bouncing, false otherwise
+ * @param {Number} data.speed speed of object (units/s)
+ * @param {Boolean} data.cosMovement flag to enable cos horizontal movement
+ * @param {Number} data.cosTime time of sin period
+ * @param {Number} data.cosMultiplier multiplier for cos movement
+ * @returns {Object} THREE.Object3D container of animation
  */
-
 function createLineAnimation(data) {
+    let container = new THREE.Object3D();
+    let obj3D = data.objectToAnimate;
+    let fromPosition = data.from;
+    let toPosition = data.to;
 
-    lineAnimations.push({
+    let direction = new THREE.Vector3(
+        toPosition.x - fromPosition.x,
+        toPosition.y - fromPosition.y,
+        toPosition.z - fromPosition.z
+    );
+    direction.normalize();
 
-    });
+    if (!data.startingPosition) {
+        let distance = fromPosition.distanceTo(toPosition);
+        let randomMult = Math.random(0, Math.floor(distance));
+        data.objectToAnimate.position.set(
+            fromPosition.x + direction.x * randomMult,
+            fromPosition.y + direction.y * randomMult,
+            fromPosition.z + direction.z * randomMult);
+    } else {
+        data.objectToAnimate.position.set(fromPosition.x, fromPosition.y, fromPosition.z);
+    }
+    console.log(direction);
+    let vectorX = new THREE.Vector3(0, direction.y, direction.z);
+    let angleX;
+    if (isNullVector(vectorX)) {
+        angleX = 0;
+    } else {
+        angleX = Z_AXIS.angleTo(vectorX);
+    }
+
+    let vectorY = new THREE.Vector3(direction.x, 0, direction.z);
+    let angleY;
+    if (isNullVector(vectorY)) {
+        angleY = 0;
+    } else {
+        angleY = Z_AXIS.angleTo(vectorY);
+    }
+    console.log(angleX, angleY);
+    let y_axis_clone = Y_AXIS.clone();
+//    y_axis_clone.applyAxisAngle(X_AXIS, angleX);
+//    y_axis_clone.applyAxisAngle(Z_AXIS, angleX);
+    obj3D.rotateOnAxis(X_AXIS, angleX);
+    obj3D.rotateOnAxis(Y_AXIS, angleY);
+    let axisRotation= y_axis_clone;
+    console.log(axisRotation);
+
+    let dataANIMATION = {
+        obj3D: obj3D,
+        from: fromPosition,
+        to: toPosition,
+        bounce: data.bounce,
+        speed: data.speed,
+        direction: direction,
+        cosMovement: data.cosMovement,
+        cosTime: data.cosTime,
+        cosMultiplier: data.cosMultiplier,
+        cosCurrentValue: 0,
+        container: container,
+        rotationAxis: axisRotation
+    };
+
+    lineAnimations.push(dataANIMATION);
+    container.add(obj3D);
+
+    return container;
 }
