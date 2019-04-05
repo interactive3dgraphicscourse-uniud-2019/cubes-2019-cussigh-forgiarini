@@ -44,12 +44,13 @@ function createDirectionalLight(data) {
 
     if (data.shadow.enabled) {
         dirLight.castShadow = true;
-        dirLight.shadow.camera.left = - 40;
-        dirLight.shadow.camera.right = 40;
-        dirLight.shadow.camera.top = 40;
-        dirLight.shadow.camera.bottom = - 25;
-        dirLight.shadow.camera.near = 3;
-        dirLight.shadow.camera.far = 98;
+        dirLight.shadow.camera.near = 20;
+        dirLight.shadow.camera.far = 160;
+        let side = Math.round((dirLight.shadow.camera.far-dirLight.shadow.camera.near) / 2);
+        dirLight.shadow.camera.left = - side;
+        dirLight.shadow.camera.right = side;
+        dirLight.shadow.camera.top = side;
+        dirLight.shadow.camera.bottom = - side;
         dirLight.shadow.mapSize.x = 1024;
         dirLight.shadow.mapSize.y = 1024;
 
@@ -62,22 +63,33 @@ function createLights() {
     hemiLight = createHemiLight({
         color: rgbToHex(255, 255, 255),
         groundColor: rgbToHex(255, 255, 255),
-        intensity: 0.6,
-        position: new THREE.Vector3(0, 500, 0)
+        intensity: 0.4,
+        position: new THREE.Vector3(0, 0, 0)
     });
     scene.add(hemiLight);
 
+    let dirLightPos = new THREE.Vector3(60,0,-60);
     dirLight = createDirectionalLight({
         color: rgbToHex(255, 255, 255),
         intensity: 1,
-        position: new THREE.Vector3(50,25,0),
+        position: dirLightPos,
         shadow: {
             enabled: enable_shadows,
             width: 1024,
             height: 1024
         }
     });
-    scene.add(dirLight);
+    let obj3D = new THREE.Object3D();
+    obj3D.add(dirLight);
+    var geometry = new THREE.SphereGeometry( 5, 32, 32 );
+    var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+    var sphere = new THREE.Mesh( geometry, material );
+    sphere.position.set(dirLightPos.x, dirLightPos.y, dirLightPos.z);
+    obj3D.add(sphere)
+    //sun rotation
+    addSimpleRotation(new THREE.Vector3(1,0,1), obj3D, 60000);
+
+    scene.add(obj3D);
     
     if(show_debug_tools){
         var helper = new THREE.CameraHelper(dirLight.shadow.camera);
