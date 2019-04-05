@@ -191,6 +191,7 @@ function animateWorld() {
                     lineAnimations[i].direction,
                     lineAnimations[i].tripPoints[nextPointIndex])
                 ) {
+                    console.log("hit");
                     if (nextPointIndex + 1 == lineAnimations[i].tripPoints.length) {
                         if (!lineAnimations[i].bounce) {
                             lineAnimations[i].endedTrip = true;
@@ -204,8 +205,9 @@ function animateWorld() {
                     } else {
                         nextTripPoint = lineAnimations[i].tripPoints[nextPointIndex + 1];
                     }
-                    if(!lineAnimations[i].endedTrip)
-                    obj.lookAt(nextTripPoint.x, nextTripPoint.y, nextTripPoint.z);
+                    if(!lineAnimations[i].endedTrip){
+                        obj.lookAt(nextTripPoint.x, nextTripPoint.y, nextTripPoint.z);
+                    }
 
                     let direction = new THREE.Vector3(
                         nextTripPoint.x - obj.position.x,
@@ -214,17 +216,23 @@ function animateWorld() {
                     );
                     direction.normalize();
                     lineAnimations[i].direction = direction;
-
+           
+                    let distance = obj.position.distanceTo(nextTripPoint);
+                    let tempoTot = distance/lineAnimations[i].speed*1000;
+                    lineAnimations[i].cosTime = Math.round(tempoTot / lineAnimations[i].cosCicles);
+                    lineAnimations[i].cosAngleRotate = X_AXIS.angleTo(lineAnimations[i].direction);
+                    lineAnimations[i].cosCurrentValue = 0;
                 }
-                if(!lineAnimations[i].endedTrip){
+
+                if (!lineAnimations[i].endedTrip) {
 
                     obj.position.add(
                         lineAnimations[i].direction
-                        .clone()
-                        .multiplyScalar((lineAnimations[i].speed * time_elapsed) / 1000)
-                        );
-                    }
-                        
+                            .clone()
+                            .multiplyScalar((lineAnimations[i].speed * time_elapsed) / 1000)
+                    );
+                }
+
                 // applying cos movement
                 if (lineAnimations[i].cosMovement && !lineAnimations[i].endedTrip) {
                     lineAnimations[i].cosCurrentValue +=
@@ -237,14 +245,12 @@ function animateWorld() {
                         lineAnimations[i].cosMultiplier
                     );
 
-                    cosVector.applyAxisAngle(X_AXIS, -lineAnimations[i].angleX);
-                    cosVector.applyAxisAngle(Z_AXIS, -lineAnimations[i].angleZ);
-
-                    lineAnimations[i].wrapper.position.set(
-                        lineAnimations[i].spherePosition.x + cosVector.x,
-                        lineAnimations[i].spherePosition.y + cosVector.y,
-                        lineAnimations[i].spherePosition.z + cosVector.z
-                    );
+                    if (lineAnimations[i].direction.z < 0) {
+                        cosVector.applyAxisAngle(Y_AXIS, lineAnimations[i].cosAngleRotate);
+                    } else {
+                        cosVector.applyAxisAngle(Y_AXIS, -lineAnimations[i].cosAngleRotate);
+                    }
+                    lineAnimations[i].container.position.add(cosVector);
                 }
             }
         }
@@ -371,17 +377,17 @@ function moveObjectInsideContainer(data) {
 }
 
 /**
- * Takes an object3D and add to him a line animation from point A to point B.
+ * Takes an object3D and add to him a line animation for a trip following points passed via parameter.
  * Assumes object is creating looking at 0,0,1.
- * Object will look where it is going, same as direction from A to B or B to A.
+ * Object will look where it is going.
  *
  * @param {Object} data Data for the function
  * @param {Object} data.objectToAnimate THREE.Object3D to animate
  * @param {Array} data.tripPoints Array of THREE.Vector3 points of trip
  * @param {Boolean} data.bounce true if obj has to restart trip, false otherwise
  * @param {Number} data.speed speed of object (units/s)
+ * @param {Number} data.cosCicles number of cos cicles from point A to point B
  * @param {Boolean} data.cosMovement flag to enable cos horizontal movement
- * @param {Number} data.cosTime time of sin period
  * @param {Number} data.cosMultiplier multiplier for cos movement
  * @returns {Object} THREE.Object3D container of animation
  */
@@ -406,6 +412,12 @@ function createLineAnimation(data) {
     );
 
     obj3D.lookAt(nextPoint.x, nextPoint.y, nextPoint.z);
+    
+    let distance = obj3D.position.distanceTo(nextPoint);
+    let tempoTot = distance/data.speed*1000;
+    let cosTime = Math.round(tempoTot / data.cosCicles);
+    let cosAngleRotate = X_AXIS.angleTo(direction);
+
     let dataANIMATION = {
         obj3D: obj3D,
         tripPoints: trip,
@@ -413,14 +425,16 @@ function createLineAnimation(data) {
         speed: data.speed,
         direction: direction,
         cosMovement: data.cosMovement,
-        cosTime: data.cosTime,
+        cosTime: cosTime,
         cosMultiplier: data.cosMultiplier,
         cosCurrentValue: 0,
         container: container,
         currentStartPoint: 0,
-        endedTrip: false
+        endedTrip: false,
+        cosCicles: data.cosCicles,
+        cosAngleRotate: cosAngleRotate
     };
-
+    console.log(dataANIMATION);
     lineAnimations.push(dataANIMATION);
     container.add(obj3D);
 

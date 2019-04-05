@@ -209,13 +209,13 @@ function createScene() {
       objectToAnimate: duck_lake,
       tripPoints: [
         new THREE.Vector3(-20, -12, 30),
-        new THREE.Vector3(20, -12, 30)
+        new THREE.Vector3(20, -12, 30),
       ],
-      bounce: false,
+      bounce: true,
       speed: 15,
-      cosMovement: false,
-      cosTime: 3000,
-      cosMultiplier: 4
+      cosMovement: true,
+      cosCicles: 1,
+      cosMultiplier: 0.2
     })
   );
 }
