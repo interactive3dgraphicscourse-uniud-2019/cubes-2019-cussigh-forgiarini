@@ -81,12 +81,9 @@ function createLights() {
     });
     let obj3D = new THREE.Object3D();
     obj3D.add(dirLight);
-    var geometry = new THREE.SphereGeometry( 5, 32, 32 );
-    var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-    var sphere = new THREE.Mesh( geometry, material );
-    sphere.position.set(dirLightPos.x, dirLightPos.y, dirLightPos.z);
-    obj3D.add(sphere)
     //sun rotation
+    let sun = createSun(new THREE.Vector3(65,0,-65));
+    obj3D.add(sun)
     addSimpleRotation(new THREE.Vector3(1,0,1), obj3D, 60000);
 
     scene.add(obj3D);

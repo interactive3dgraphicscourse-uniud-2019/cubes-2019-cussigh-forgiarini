@@ -51,3 +51,21 @@ function createPine(dimensions, colorData, position) {
     tree.position.set(position.x, position.y, position.z);
     return tree;
 }
+
+/**
+ * Returns a 5x5x5 sun
+ * @param {Object} position  3VECTOR indicating position
+ */
+function createSun(position) {
+    let sun = new THREE.Object3D();
+    sun.add(createRing({ x: 3, y: 1, z: 1 }, { color1: "wool_colored_yellow" }, { x: 0, y: 0, z: 2 }));
+    sun.add(createRing({ x: 3, y: 1, z: 1 }, { color1: "wool_colored_yellow" }, { x: 0, y: 0, z: -2 }));
+    sun.add(createRing({ x: 1, y: 1, z: 3 }, { color1: "wool_colored_yellow" }, { x: 2, y: 0, z: 0 }));
+    sun.add(createRing({ x: 1, y: 1, z: 3 }, { color1: "wool_colored_yellow" }, { x: -2, y: 0, z: 0 }));
+    sun.add(createRing({ x: 3, y: 1, z: 3 }, { color1: "wool_colored_yellow" }, { x: 0, y: 1, z: 0 }));
+    sun.add(createRing({ x: 3, y: 1, z: 3 }, { color1: "wool_colored_yellow" }, { x: 0, y: -1, z: 0 }));
+    sun.add(createRing({ x: 1, y: 1, z: 1 }, { color1: "wool_colored_yellow" }, { x: 0, y: -2, z: 0 }));
+    sun.add(createRing({ x: 1, y: 1, z: 1 }, { color1: "wool_colored_yellow" }, { x: 0, y: 2, z: 0 }));
+    sun.position.set(position.x, position.y, position.z);
+    return sun;
+}
