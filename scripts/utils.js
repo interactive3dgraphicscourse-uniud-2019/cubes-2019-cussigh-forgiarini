@@ -79,8 +79,19 @@ function inBound2(i, j, mi, mj) {
  * @returns {Number} Angle expressend in radians
  */
 function degToRad(deg) {
-    return deg * (Math.PI / 180)
+    return deg * (Math.PI / 180);
 }
+
+/**
+ * Converts an angle in radians in the corrisponding angle in degrees
+ * 
+ * @param {Number} rad angle expressed in degrees
+ * @returns {Number} Angle expressend in radians
+ */
+function radToDeg(rad) {
+    return rad * (180/Math.PI);
+}
+
 /**
  * Checks if a vector calculating his distance to the vector (2^-52, 2^-52, 2^-52).
  * If distance is less returns true, otherwise false.

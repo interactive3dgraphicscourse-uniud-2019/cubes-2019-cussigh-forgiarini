@@ -36,7 +36,7 @@ function createRenderer() {
 /**
  * Creates an istance of THREE.PerspectiveCamera and links to the body.
  * If position and lookAt parameters are not passed, camera will be placed at 2,5,10 and look at 0,0,0.
- * 
+ *
  * @param {Object} [position] Vector3 of camera position
  * @param {Object} [lookAt]   Vector3 of camera lookAt
  */
@@ -47,7 +47,8 @@ function createCamera(position, lookAt) {
     0.1,
     1000
   );
-  position = typeof position == "undefined" ? new THREE.Vector3(10, 20, 20) : position;
+  position =
+    typeof position == "undefined" ? new THREE.Vector3(10, 20, 20) : position;
   camera.position.set(position.x, position.y, position.z);
   lookAt = typeof lookAt == "undefined" ? new THREE.Vector3(0, 0, 0) : lookAt;
   camera.lookAt(lookAt);
@@ -56,58 +57,81 @@ function createCamera(position, lookAt) {
 function createScene() {
   // GROUND
   createLights();
-
   let windmill = createWindmill({
-    width: 8, height: 20, depth: 12,
-    colors: { color1: "wool_colored_light_brown", color2: "wool_colored_red" },
+    width: 8,
+    height: 20,
+    depth: 12,
+    colors: {
+      color1: "wool_colored_light_brown",
+      color2: "wool_colored_red"
+    },
     position: { x: -21, y: 8, z: -14 }
   });
-  windmill.rotateOnAxis(Y_AXIS, -Math.PI/4);
+  windmill.rotateOnAxis(Y_AXIS, -Math.PI / 4);
   scene.add(windmill);
 
   //
-  let flying_duck_1 = createDuck("wool_colored_yellow", { x: 0, y: 0, z: 0 }, true);
-  flying_duck_1.scale.set(0.5,0.5,0.5);
-  scene.add(createCicleSphereAnimation({
-    objectToAnimate: flying_duck_1,
-    spherePosition: new THREE.Vector3(-10, 30, 6),
-    radius: 8,
-    rotationVector: new THREE.Vector3(0, 1, 0),
-    sinMovement: true,
-    sinTime: 2000,
-    sinMultiplier: 1,
-    rotationTime: 20000
-  }));
+  let flying_duck_1 = createDuck(
+    "wool_colored_yellow",
+    { x: 0, y: 0, z: 0 },
+    true
+  );
+  flying_duck_1.scale.set(0.5, 0.5, 0.5);
+  scene.add(
+    createCicleSphereAnimation({
+      objectToAnimate: flying_duck_1,
+      spherePosition: new THREE.Vector3(-10, 30, 6),
+      radius: 8,
+      rotationVector: new THREE.Vector3(0, 1, 0),
+      sinMovement: true,
+      sinTime: 2000,
+      sinMultiplier: 1,
+      rotationTime: 20000
+    })
+  );
 
-  let flying_duck_2 = createDuck("wool_colored_yellow", { x: 0, y: 0, z: 0 }, true);
-  flying_duck_2.scale.set(0.5,0.5,0.5);
-  scene.add(createCicleSphereAnimation({
-    objectToAnimate: flying_duck_2,
-    spherePosition: new THREE.Vector3(10, 30, 6),
-    radius: 8,
-    rotationVector: new THREE.Vector3(0, 1, 0),
-    sinMovement: true,
-    sinTime: 4000,
-    sinMultiplier: 1,
-    rotationTime: 20000
-  }));
-
+  let flying_duck_2 = createDuck(
+    "wool_colored_yellow",
+    { x: 0, y: 0, z: 0 },
+    true
+  );
+  flying_duck_2.scale.set(0.5, 0.5, 0.5);
+  scene.add(
+    createCicleSphereAnimation({
+      objectToAnimate: flying_duck_2,
+      spherePosition: new THREE.Vector3(10, 30, 6),
+      radius: 8,
+      rotationVector: new THREE.Vector3(0, 1, 0),
+      sinMovement: true,
+      sinTime: 4000,
+      sinMultiplier: 1,
+      rotationTime: 20000
+    })
+  );
 
   let stable = createStable({
-    width: 40, height: 10, depth: 20,
-    colors: { color1: "wool_colored_light_brown", color2: "wool_colored_beige" },
+    width: 40,
+    height: 10,
+    depth: 20,
+    colors: {
+      color1: "wool_colored_light_brown",
+      color2: "wool_colored_beige"
+    },
     position: { x: 15, y: 0, z: -10 }
   });
 
   scene.add(stable);
 
-  let pig = createPig("wool_colored_light_pink", new THREE.Vector3(3, 0.5, -10));
-  pig.scale.set(0.6,0.6,0.6);
+  let pig = createPig(
+    "wool_colored_light_pink",
+    new THREE.Vector3(3, 0.5, -10)
+  );
+  pig.scale.set(0.6, 0.6, 0.6);
   let recintoData = {
     dimensions: {
       x: 18,
       y: 1,
-      z: 18,
+      z: 18
     },
     position: {
       x: 6,
@@ -116,7 +140,11 @@ function createScene() {
     }
   };
 
-  let recinto = createRing(recintoData.dimensions, { color1: "wool_colored_brown" }, recintoData.position);
+  let recinto = createRing(
+    recintoData.dimensions,
+    { color1: "wool_colored_brown" },
+    recintoData.position
+  );
   scene.add(pig);
   scene.add(recinto);
 
@@ -124,48 +152,78 @@ function createScene() {
     obj: pig,
     bounderies: recintoData,
     fixBounderies: 3,
-    directionVector: (new THREE.Vector3(1, 0, 0.5)).normalize(),
-    speed: 10,
+    directionVector: new THREE.Vector3(1, 0, 0.5).normalize(),
+    speed: 10
   });
 
-  let cow_1 = createCow({ color1: "wool_colored_brown", color2: "wool_colored_white", variance: 9 }, {x:30,y:0,z:-10});
+  let cow_1 = createCow(
+    {
+      color1: "wool_colored_brown",
+      color2: "wool_colored_white",
+      variance: 9
+    },
+    { x: 30, y: 0, z: -10 }
+  );
   scene.add(cow_1);
-  cow_1.scale.set(0.7,0.7,0.7);
-  let cow_2 = createCow({ color1: "wool_colored_brown", color2: "wool_colored_white", variance: 7 }, {x:20,y:0,z:-3});
+  cow_1.scale.set(0.7, 0.7, 0.7);
+  let cow_2 = createCow(
+    {
+      color1: "wool_colored_brown",
+      color2: "wool_colored_white",
+      variance: 7
+    },
+    { x: 20, y: 0, z: -3 }
+  );
   scene.add(cow_2);
-  cow_2.scale.set(0.7,0.7,0.7);   
+  cow_2.scale.set(0.7, 0.7, 0.7);
   let pines = [];
 
-  let pineColor = { color1: "wool_colored_emerald", color2: "wool_colored_turquoise", variance: 5 };
+  let pineColor = {
+    color1: "wool_colored_emerald",
+    color2: "wool_colored_turquoise",
+    variance: 5
+  };
 
-  pines.push(createPine({ x: 7, y: 20, z: 6 }, pineColor,  {x:26,y:0,z:10}));
-  pines.push(createPine({ x: 3, y: 12, z: 4 }, pineColor,  {x:30,y:0,z:18}));
-  pines.push(createPine({ x: 3, y: 12, z: 4 }, pineColor,  {x:-12,y:8,z:-20}));
-  pines.push(createPine({ x: 3, y: 7, z: 4 }, pineColor,  {x:-30,y:8,z:-3}));
-   pines.forEach(pine => {
+  pines.push(
+    createPine({ x: 7, y: 20, z: 6 }, pineColor, { x: 26, y: 0, z: 10 })
+  );
+  pines.push(
+    createPine({ x: 3, y: 12, z: 4 }, pineColor, { x: 30, y: 0, z: 18 })
+  );
+  pines.push(
+    createPine({ x: 3, y: 12, z: 4 }, pineColor, { x: -12, y: 8, z: -20 })
+  );
+  pines.push(
+    createPine({ x: 3, y: 7, z: 4 }, pineColor, { x: -30, y: 8, z: -3 })
+  );
+  pines.forEach(pine => {
     scene.add(pine);
-  }); 
+  });
 
   let terrain = createTerrain();
   scene.add(terrain);
 
   let duck_lake = createDuck("wool_colored_yellow", { x: 0, y: 0, z: 0 }, true);
-  scene.add(createLineAnimation({
-    startingPosition: true,
-    objectToAnimate: duck_lake,
-    from: new THREE.Vector3(-20, 50, 20),
-    to: new THREE.Vector3(20, -50, 20),
-    bounce: true,
-    speed: 15,
-    cosMovement: false,
-    cosTime: 3000,
-    cosMultiplier: 4
-  }));
+  scene.add(
+    createLineAnimation({
+      objectToAnimate: duck_lake,
+      tripPoints: [
+        new THREE.Vector3(-20, -12, 30),
+        new THREE.Vector3(20, -12, 30)
+      ],
+      bounce: false,
+      speed: 15,
+      cosMovement: false,
+      cosTime: 3000,
+      cosMultiplier: 4
+    })
+  );
 }
 
 function init() {
   scene = new THREE.Scene();
   show_debug_tools = true;
+  enable_shadows = true;
   createRenderer();
 
   createCamera(new THREE.Vector3(10, 10, 20));
@@ -174,7 +232,7 @@ function init() {
   createControls();
 
   // creating stats of frame
-  if(show_debug_tools){
+  if (show_debug_tools) {
     stats = createStats();
     // uncomment if you need to draw coordinate axes when building the scene
     Coordinates.drawAllAxes();
@@ -190,8 +248,8 @@ function init() {
 
   createScene();
 
-  document.addEventListener("keyup", e =>{
-    if(e.key == " "){
+  document.addEventListener("keyup", e => {
+    if (e.key == " ") {
       animateOrStopWorld();
     }
   });
@@ -202,7 +260,7 @@ function updateWorld() {
   requestAnimationFrame(updateWorld);
   animateWorld();
   controls.update();
-  if(show_debug_tools){
+  if (show_debug_tools) {
     stats.update();
   }
   renderWorld();
@@ -214,7 +272,7 @@ function renderWorld() {
 
 function animateOrStopWorld() {
   moveWorld = !moveWorld;
-  if(moveWorld){
+  if (moveWorld) {
     enableAnimations();
   }
 }

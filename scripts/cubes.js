@@ -11,8 +11,10 @@ function loadWools(loader, geometry, woolColors) {
         let cube = new THREE.Mesh(geometry, material);
 
         // enable cube shadow
-        cube.castShadow = true;
-        cube.receiveShadow = true;
+        if(enable_shadows){
+            cube.castShadow = true;
+            cube.receiveShadow = true;
+        }
 
         // saving reference for the cube
         let id = availableCubes.length;
