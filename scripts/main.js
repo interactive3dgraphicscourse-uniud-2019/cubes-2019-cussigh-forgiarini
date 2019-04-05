@@ -72,8 +72,9 @@ function createScene() {
 
   //
   let flying_duck_1 = createDuck(
-    "wool_colored_yellow",
+    "wool_colored_white",
     { x: 0, y: 0, z: 0 },
+    true,
     true
   );
   flying_duck_1.scale.set(0.5, 0.5, 0.5);
@@ -91,8 +92,9 @@ function createScene() {
   );
 
   let flying_duck_2 = createDuck(
-    "wool_colored_yellow",
+    "wool_colored_silver",
     { x: 0, y: 0, z: 0 },
+    true,
     true
   );
   flying_duck_2.scale.set(0.5, 0.5, 0.5);
@@ -203,7 +205,7 @@ function createScene() {
   let terrain = createTerrain();
   scene.add(terrain);
 
-  let duck_lake = createDuck("wool_colored_yellow", { x: 0, y: 0, z: 0 }, true);
+  let duck_lake = createDuck("wool_colored_yellow", { x: 0, y: 0, z: 0 }, true, false);
   scene.add(
     createLineAnimation({
       objectToAnimate: duck_lake,

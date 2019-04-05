@@ -39,14 +39,15 @@ function createBigDuck(color, position) {
 }
 
 /**
- * Creates a duck 3x5x7
+ * Creates a duck 5x5x7
  * 
  * @param {*} color    color name of the duck
  * @param {*} position 3VECTOR position
  * @param {Boolean} center flag to center duck also in y axes
+ * @param {Boolean} wings       if true wings are open
  */
 
-function createDuck(color, position, center) {
+function createDuck(color, position, center, wings) {
     idColor = getBlockPosition(color);
     let duck = new THREE.Object3D();
     let feet = new THREE.Object3D();
@@ -70,6 +71,15 @@ function createDuck(color, position, center) {
     feet.add(createRectangle({ x: 1, z: 2 }, { color1: "wool_colored_orange" }, { x: -1, y: 0, z: 0.5 }));
     feet.add(createRectangle({ x: 1, z: 2 }, { color1: "wool_colored_orange" }, { x: 1, y: 0, z: 0.5 }));
     duck.add(feet);
+
+    //wings
+    duck.add(createRing({ x: 1, y: 1, z: 3 }, { color1: color }, { x: -2, y: 2, z: 0 }));
+    duck.add(createRing({ x: 1, y: 1, z: 3 }, { color1: color }, { x: 2, y: 2, z: 0 }));
+
+    if (wings) {
+        duck.add(createRing({ x: 1, y: 1, z: 2 }, { color1: color }, { x: -3, y: 2, z: -0.5 }));
+        duck.add(createRing({ x: 1, y: 1, z: 2 }, { color1: color }, { x: 3, y: 2, z: -0.5 }));
+    }
 
     if (center) {
         duck.position.set(0, -2, -1);
@@ -153,4 +163,3 @@ function createCow(colorData, position) {
     cow.position.set(position.x, position.y, position.z);
     return cow;
 }
-
