@@ -191,7 +191,6 @@ function animateWorld() {
                     lineAnimations[i].direction,
                     lineAnimations[i].tripPoints[nextPointIndex])
                 ) {
-                    console.log("hit");
                     if (nextPointIndex + 1 == lineAnimations[i].tripPoints.length) {
                         if (!lineAnimations[i].bounce) {
                             lineAnimations[i].endedTrip = true;
@@ -434,7 +433,6 @@ function createLineAnimation(data) {
         cosCicles: data.cosCicles,
         cosAngleRotate: cosAngleRotate
     };
-    console.log(dataANIMATION);
     lineAnimations.push(dataANIMATION);
     container.add(obj3D);
 

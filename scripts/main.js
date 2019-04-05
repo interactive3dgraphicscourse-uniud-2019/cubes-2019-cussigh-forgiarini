@@ -204,12 +204,13 @@ function createScene() {
   scene.add(terrain);
 
   let duck_lake = createDuck("wool_colored_yellow", { x: 0, y: 0, z: 0 }, true);
+  duck_lake.scale.set(0.5, 0.5, 0.5);
   scene.add(
     createLineAnimation({
       objectToAnimate: duck_lake,
       tripPoints: [
-        new THREE.Vector3(-20, -12, 30),
-        new THREE.Vector3(20, -12, 30),
+        new THREE.Vector3(-20, -12.5, 30),
+        new THREE.Vector3(20, -12.5, 30),
       ],
       bounce: true,
       speed: 15,
@@ -222,7 +223,7 @@ function createScene() {
 
 function init() {
   scene = new THREE.Scene();
-  show_debug_tools = true;
+  show_debug_tools = false;
   enable_shadows = true;
   createRenderer();
 
