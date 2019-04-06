@@ -31,6 +31,8 @@ Creata una funzione che genera una griglia con tutti i cubi che si possono utili
 
 28.03.2019
 =============
+Si è pensato di utilizzare una matrice a tre dimensioni per avere un miglior controllo della posione degli oggetti nel mondo, tuttavia l'implementazione eseguita era troppo onerosa come risorse computazionali, pertanto l'idea è stata abbandonata.
+
 Create le funzioni geometriche di base per anelli e rettangoli
 
 Creata la funzione per la generazione di alberi di grandezza e colore impostabili
@@ -43,6 +45,8 @@ Create le funzioni per la creazione di anatre, maiali e mucche
 
 30.03.2019
 =============
+Ci siamo accorti che le ombre degli oggetti non venivano calcolate al di fuori di una zona definita, pertanto, dopo aver capito come vengono calcolate, abbiamo impostato la luce direzionale in modo tale da vedere le ombre di tutti gli oggetti in scena.
+
 Refactoring del codice, diviso in diversi file per maggiore chiarezza
 
 Create le funzioni per generare stalle e tetti, parametriche su dimensioni e colore
@@ -54,7 +58,40 @@ Creata la funzione per generare il mulino, parametrica su dimensioni e colore. P
 01.04.2019
 =============
 Creata la funzione per generare il terreno a partire da un'immagine in scala di grigi
+Iniziata la gestione delle animazioni. La prima di esse consite nell'implementare il movimento di un oggetto attorno ad un asse di rotazione. Si vuole implementare anche l'opzione del moto sinusoidale in verticale.
+
+02.04.2019
+=============
+Ideata l'animazione del maiale dentro il recinto: esso deve muoversi verso il muro e rimbalzare con urto elastico.
 
 03.04.2019
 =============
-Creata la scena
+Dopo aver risolto il problema del maiale che gira su se stesso (era dovuto al mancato controllo del già avvenuto cambio di direzione) si è creata la scena.
+
+04.04.2019
+=============
+Aggiunta la possibilità di abilitare o disabilitare la visione degli assi, zone dove vengono calcolate le ombre e statistiche sulla scena (framerate, tempo di calcolo di un frame, occupazione di memoria).
+
+Risolto un problema nella generazione del terreno: in alcuni casi l'acqua veniva generata con un blocco di colore sbagliato.
+
+Cambiate le texture.
+
+Creata un'animazione per il movimento di un oggetto lungo una linea definita da un punto di partenza e uno di arrivo.
+
+05.04.2019
+=============
+Risolto il problema dello sguardo della anatra: le rotazioni non venivano fatte nel modo giusto, abbiamo scelto di utilizzare il metodo lookAt() dell'oggetto THREE.Object3D().
+
+Generalizzato il movimento dal semplice percorso da un punto A a B. Ora è possibile indicare un insieme di punti da percorre come tragitto e indicare se eseguire il tragitto più volte o semplicemente fermarsi quando l'oggetto è arrivato a destinazione.
+
+Aggiunta la possibilità di muoversi orizzontalmente in modo cosinusoidale durante il tragitto.
+
+Aggiunte le ali alle papere e la possibilità di indicare se esse debbano essere aperte o chiuse.
+
+Aggiunta un'animazione alla luce direzionale per simulare il sole durante una giornata.
+
+Creato un modello per il sole e posizionato leggermente dietro la luce direzionale.
+
+06.04.2019
+=============
+Risolto un problema nel movimento degli oggetti con movimenti sinuosoidali: a velocità diverse l'oggetto spariva dalla scena.
