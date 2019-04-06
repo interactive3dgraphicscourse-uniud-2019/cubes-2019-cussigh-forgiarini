@@ -5,6 +5,10 @@ let controls, stats;
  */
 function createControls() {
   controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+  // disabling key commands
+  controls.enableKeys = false;
+
   //call this only in static scenes (i.e., if there is no animation loop)
   //controls.addEventListener( 'change', render );
 }
@@ -85,7 +89,7 @@ function createScene() {
       radius: 30,
       rotationVector: new THREE.Vector3(0, 1, 0),
       sinMovement: true,
-      sinTime: 5000,
+      sinCicles: 7,
       sinMultiplier: 2,
       rotationTime: 6000,
       inverseRotation: false
@@ -106,7 +110,7 @@ function createScene() {
       radius: 30,
       rotationVector: new THREE.Vector3(0, 1, 0),
       sinMovement: true,
-      sinTime: 4000,
+      sinCicles: 5,
       sinMultiplier: 4,
       rotationTime: 8000,
       inverseRotation: false
@@ -127,7 +131,7 @@ function createScene() {
       radius: 20,
       rotationVector: new THREE.Vector3(0, 1, 1),
       sinMovement: true,
-      sinTime: 4000,
+      sinCicles: 3,
       sinMultiplier: 3,
       rotationTime: 8000,
       inverseRotation: true
@@ -266,19 +270,16 @@ function init() {
 
   // add listener for resize event of window to update renderer
   window.addEventListener("resize", resizeListener, false);
-
+  
   // loading texture and creating avaiable cubes for the scene
   loadCubes();
-
+  
   initAnimations();
-
+  
   createScene();
+  
+  linkUserEvents();
 
-  document.addEventListener("keyup", e => {
-    if (e.key == " ") {
-      animateOrStopWorld();
-    }
-  });
   updateWorld();
 }
 
