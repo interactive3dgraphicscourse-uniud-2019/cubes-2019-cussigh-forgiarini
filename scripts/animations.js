@@ -36,6 +36,9 @@ function animateWorld() {
             // rotate object inside sphere
             let angle =
                 (time_elapsed / sphereRotations[i].rotationTime) * 2 * Math.PI;
+            if (sphereRotations[i].inverseRotation){
+                angle *= -1;
+            }
             sphereRotations[i].container.rotateOnAxis(
                 sphereRotations[i].rotationVector,
                 -angle
@@ -56,11 +59,8 @@ function animateWorld() {
                 sinVector.applyAxisAngle(X_AXIS, -sphereRotations[i].angleX);
                 sinVector.applyAxisAngle(Z_AXIS, -sphereRotations[i].angleZ);
 
-                sphereRotations[i].wrapper.position.set(
-                    sphereRotations[i].spherePosition.x + sinVector.x,
-                    sphereRotations[i].spherePosition.y + sinVector.y,
-                    sphereRotations[i].spherePosition.z + sinVector.z
-                );
+                sphereRotations[i].wrapper.position.add(sphereRotations[i].sinCurrentVector.sub(sinVector));
+                sphereRotations[i].sinCurrentVector.set(sinVector.x, sinVector.y, sinVector.z);
             }
         }
 
@@ -232,24 +232,26 @@ function animateWorld() {
                     );
                 }
 
-                // applying cos movement
-                if (lineAnimations[i].cosMovement && !lineAnimations[i].endedTrip) {
-                    lineAnimations[i].cosCurrentValue +=
-                        (time_elapsed / lineAnimations[i].cosTime) * 2 * Math.PI;
+                // applying sin movement
+                if (lineAnimations[i].sinMovement && !lineAnimations[i].endedTrip) {
+                    lineAnimations[i].sinCurrentValue +=
+                        ((time_elapsed / lineAnimations[i].sinTime) * 2 * Math.PI);
 
-                    let cosVector = new THREE.Vector3(
+                    let sinVector = new THREE.Vector3(
                         0,
                         0,
-                        Math.cos(lineAnimations[i].cosCurrentValue) *
-                        lineAnimations[i].cosMultiplier
+                        Math.sin(lineAnimations[i].sinCurrentValue) *
+                        lineAnimations[i].sinMultiplier
                     );
 
                     if (lineAnimations[i].direction.z < 0) {
-                        cosVector.applyAxisAngle(Y_AXIS, lineAnimations[i].cosAngleRotate);
+                        sinVector.applyAxisAngle(Y_AXIS, lineAnimations[i].sinAngleRotate);
                     } else {
-                        cosVector.applyAxisAngle(Y_AXIS, -lineAnimations[i].cosAngleRotate);
+                        sinVector.applyAxisAngle(Y_AXIS, -lineAnimations[i].sinAngleRotate);
                     }
-                    lineAnimations[i].container.position.add(cosVector);
+
+                    lineAnimations[i].container.position.add(lineAnimations[i].sinCurrentVector.sub(sinVector));
+                    lineAnimations[i].sinCurrentVector.set(sinVector.x, sinVector.y, sinVector.z);
                 }
             }
         }
@@ -279,12 +281,17 @@ function createCicleSphereAnimation(data) {
     let radius = data.radius;
 
     let radiusWrapper = new THREE.Object3D();
+
+    let inverseRotation = data.inverseRotation;
+    if (inverseRotation){
+        objectToAnimate.rotateOnAxis(Y_AXIS, Math.PI);
+    }
+
     radiusWrapper.add(objectToAnimate);
     radiusWrapper.position.set(radius, 0, 0);
 
     let objectToAnimateWrapper = new THREE.Object3D();
     objectToAnimateWrapper.add(radiusWrapper);
-
     let vectorX = new THREE.Vector3(0, rotationVector.y, rotationVector.z);
     let angleX;
     if (isNullVector(vectorX)) {
@@ -300,7 +307,10 @@ function createCicleSphereAnimation(data) {
     } else {
         angleZ = Y_AXIS.angleTo(vectorZ);
     }
-
+    if (inverseRotation) {
+        angleX *= -1;
+        angleZ *= -1;
+    }
     objectToAnimateWrapper.rotateOnAxis(X_AXIS, -angleX);
     objectToAnimateWrapper.rotateOnAxis(Z_AXIS, -angleZ);
 
@@ -328,7 +338,9 @@ function createCicleSphereAnimation(data) {
         rotationTime: data.rotationTime,
         sinTime: data.sinTime,
         sinMultiplier: data.sinMultiplier,
-        sinCurrentValue: 0
+        sinCurrentValue: 0,
+        sinCurrentVector: new THREE.Vector3(0,0,0),
+        inverseRotation: inverseRotation
     });
     return animationWrapper;
 }
@@ -414,8 +426,8 @@ function createLineAnimation(data) {
     
     let distance = obj3D.position.distanceTo(nextPoint);
     let tempoTot = distance/data.speed*1000;
-    let cosTime = Math.round(tempoTot / data.cosCicles);
-    let cosAngleRotate = X_AXIS.angleTo(direction);
+    let sinTime = Math.round(tempoTot / data.sinCicles);
+    let sinAngleRotate = X_AXIS.angleTo(direction);
 
     let dataANIMATION = {
         obj3D: obj3D,
@@ -423,15 +435,16 @@ function createLineAnimation(data) {
         bounce: data.bounce,
         speed: data.speed,
         direction: direction,
-        cosMovement: data.cosMovement,
-        cosTime: cosTime,
-        cosMultiplier: data.cosMultiplier,
-        cosCurrentValue: 0,
+        sinMovement: data.sinMovement,
+        sinTime: sinTime,
+        sinMultiplier: data.sinMultiplier,
+        sinCurrentValue: 0,
         container: container,
         currentStartPoint: 0,
         endedTrip: false,
-        cosCicles: data.cosCicles,
-        cosAngleRotate: cosAngleRotate
+        sinCicles: data.sinCicles,
+        sinAngleRotate: sinAngleRotate,
+        sinCurrentVector: new THREE.Vector3(0,0,0)
     };
     lineAnimations.push(dataANIMATION);
     container.add(obj3D);

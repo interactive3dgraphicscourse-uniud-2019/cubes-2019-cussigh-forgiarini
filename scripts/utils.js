@@ -46,7 +46,7 @@ function createStats() {
 }
 
 /**
- * 
+ * take a number in [0,255] range and returns his conversion in hexadecimal value
  * @param {Number} c 
  */
 function componentToHex(c) {
@@ -93,7 +93,7 @@ function radToDeg(rad) {
 }
 
 /**
- * Checks if a vector calculating his distance to the vector (2^-52, 2^-52, 2^-52).
+ * Checks if a vector is null vector by calculating his distance to the vector (2^-52, 2^-52, 2^-52).
  * If distance is less returns true, otherwise false.
  * 
  * @param {Object} vector 3d vector to check
@@ -106,8 +106,9 @@ function isNullVector(vector) {
 }
 
 /**
- * Checks if an object is going to a target position (in a line)
- * If object is hover target returns false.
+ * Checks if an object is going to a target position (in a line) by calculating angle between his direction and direction from his position and target position.
+ * If angle is less then MAX_DIFFERENCE_ANGLE costant returns true, otherwise false.
+ * If object is over target returns false.
  * 
  * @param {Object} currPosition 3d Vector of current position
  * @param {Object} direction 3d Vector of object direction

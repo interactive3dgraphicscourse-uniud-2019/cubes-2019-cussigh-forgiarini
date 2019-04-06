@@ -82,12 +82,13 @@ function createScene() {
     createCicleSphereAnimation({
       objectToAnimate: flying_duck_1,
       spherePosition: new THREE.Vector3(-10, 30, 6),
-      radius: 8,
+      radius: 30,
       rotationVector: new THREE.Vector3(0, 1, 0),
       sinMovement: true,
-      sinTime: 2000,
-      sinMultiplier: 1,
-      rotationTime: 20000
+      sinTime: 5000,
+      sinMultiplier: 2,
+      rotationTime: 6000,
+      inverseRotation: false
     })
   );
 
@@ -102,12 +103,34 @@ function createScene() {
     createCicleSphereAnimation({
       objectToAnimate: flying_duck_2,
       spherePosition: new THREE.Vector3(10, 30, 6),
-      radius: 8,
+      radius: 30,
       rotationVector: new THREE.Vector3(0, 1, 0),
       sinMovement: true,
       sinTime: 4000,
-      sinMultiplier: 1,
-      rotationTime: 20000
+      sinMultiplier: 4,
+      rotationTime: 8000,
+      inverseRotation: false
+    })
+  );
+
+  let flying_duck_3 = createDuck(
+    "wool_colored_silver",
+    { x: 0, y: 0, z: 0 },
+    true,
+    true
+  );
+  flying_duck_3.scale.set(0.5, 0.5, 0.5);
+  scene.add(
+    createCicleSphereAnimation({
+      objectToAnimate: flying_duck_3,
+      spherePosition: new THREE.Vector3(0, 40, 6),
+      radius: 20,
+      rotationVector: new THREE.Vector3(0, 1, 1),
+      sinMovement: true,
+      sinTime: 4000,
+      sinMultiplier: 3,
+      rotationTime: 8000,
+      inverseRotation: true
     })
   );
 
@@ -155,7 +178,7 @@ function createScene() {
     bounderies: recintoData,
     fixBounderies: 3,
     directionVector: new THREE.Vector3(1, 0, 0.5).normalize(),
-    speed: 10
+    speed: 5
   });
 
   let cow_1 = createCow(
@@ -211,21 +234,21 @@ function createScene() {
     createLineAnimation({
       objectToAnimate: duck_lake,
       tripPoints: [
-        new THREE.Vector3(-20, -12.5, 30),
-        new THREE.Vector3(20, -12.5, 30),
+        new THREE.Vector3(-20, -12.5, 28),
+        new THREE.Vector3(20, -12.5, 28),
       ],
       bounce: true,
-      speed: 15,
-      cosMovement: true,
-      cosCicles: 1,
-      cosMultiplier: 0.2
+      speed: 5,
+      sinMovement: true,
+      sinCicles: 3,
+      sinMultiplier: 2
     })
   );
 }
 
 function init() {
   scene = new THREE.Scene();
-  show_debug_tools = false;
+  show_debug_tools = true;
   enable_shadows = true;
   createRenderer();
 
