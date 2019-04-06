@@ -248,7 +248,7 @@ function createScene() {
 
 function init() {
   scene = new THREE.Scene();
-  show_debug_tools = true;
+  show_debug_tools = false;
   enable_shadows = true;
   createRenderer();
 
