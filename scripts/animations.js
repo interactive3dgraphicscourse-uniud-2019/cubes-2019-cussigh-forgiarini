@@ -9,7 +9,7 @@ function initAnimations() {
     simpleRotations = [];
     movingOBJInsideContainers = [];
     lineAnimations = [];
-    moveWorld = false;
+    enableAnimations();
 }
 
 let milliseconds_elapsed;
@@ -178,33 +178,34 @@ function animateWorld() {
         }
         for (let i = 0; i < lineAnimations.length; i++) {
             if (!lineAnimations[i].endedTrip) {
-                let obj = lineAnimations[i].obj3D;
+                let lineAnim = lineAnimations[i];
+                let obj = lineAnim.obj3D;
                 let nextPointIndex;
-                if (lineAnimations[i].currentStartPoint == lineAnimations[i].tripPoints.length - 1) {
+                if (lineAnim.currentStartPoint == lineAnim.tripPoints.length - 1) {
                     nextPointIndex = 0;
                 } else {
-                    nextPointIndex = lineAnimations[i].currentStartPoint + 1;
+                    nextPointIndex = lineAnim.currentStartPoint + 1;
                 }
 
                 if (!isOBJMovingTo(
                     obj.position,
-                    lineAnimations[i].direction,
-                    lineAnimations[i].tripPoints[nextPointIndex])
+                    lineAnim.direction,
+                    lineAnim.tripPoints[nextPointIndex])
                 ) {
-                    if (nextPointIndex + 1 == lineAnimations[i].tripPoints.length) {
-                        if (!lineAnimations[i].bounce) {
-                            lineAnimations[i].endedTrip = true;
+                    if (nextPointIndex + 1 == lineAnim.tripPoints.length) {
+                        if (!lineAnim.bounce) {
+                            lineAnim.endedTrip = true;
                         }
                     }
-                    lineAnimations[i].currentStartPoint = nextPointIndex;
+                    lineAnim.currentStartPoint = nextPointIndex;
 
                     let nextTripPoint;
-                    if (nextPointIndex == lineAnimations[i].tripPoints.length - 1) {
-                        nextTripPoint = lineAnimations[i].tripPoints[0];
+                    if (nextPointIndex == lineAnim.tripPoints.length - 1) {
+                        nextTripPoint = lineAnim.tripPoints[0];
                     } else {
-                        nextTripPoint = lineAnimations[i].tripPoints[nextPointIndex + 1];
+                        nextTripPoint = lineAnim.tripPoints[nextPointIndex + 1];
                     }
-                    if(!lineAnimations[i].endedTrip){
+                    if(!lineAnim.endedTrip){
                         obj.lookAt(nextTripPoint.x, nextTripPoint.y, nextTripPoint.z);
                     }
 
@@ -214,44 +215,37 @@ function animateWorld() {
                         nextTripPoint.z - obj.position.z
                     );
                     direction.normalize();
-                    lineAnimations[i].direction = direction;
-           
-                    let distance = obj.position.distanceTo(nextTripPoint);
-                    let tempoTot = distance/lineAnimations[i].speed*1000;
-                    lineAnimations[i].cosTime = Math.round(tempoTot / lineAnimations[i].cosCicles);
-                    lineAnimations[i].cosAngleRotate = X_AXIS.angleTo(lineAnimations[i].direction);
-                    lineAnimations[i].cosCurrentValue = 0;
+                    lineAnim.direction = direction;
+                    updateLinearSinMovement(lineAnim, obj.position, nextTripPoint);
                 }
 
-                if (!lineAnimations[i].endedTrip) {
+                if (!lineAnim.endedTrip) {
 
                     obj.position.add(
-                        lineAnimations[i].direction
+                        lineAnim.direction
                             .clone()
-                            .multiplyScalar((lineAnimations[i].speed * time_elapsed) / 1000)
+                            .multiplyScalar((lineAnim.speed * time_elapsed) / 1000)
                     );
                 }
 
                 // applying sin movement
-                if (lineAnimations[i].sinMovement && !lineAnimations[i].endedTrip) {
-                    lineAnimations[i].sinCurrentValue +=
-                        ((time_elapsed / lineAnimations[i].sinTime) * 2 * Math.PI);
-
+                if (lineAnim.sinMovement && !lineAnim.endedTrip) {
+                    lineAnim.sinCurrentValue +=
+                        ((time_elapsed / lineAnim.sinTime) * 2 * Math.PI);
                     let sinVector = new THREE.Vector3(
                         0,
                         0,
-                        Math.sin(lineAnimations[i].sinCurrentValue) *
-                        lineAnimations[i].sinMultiplier
+                        Math.sin(lineAnim.sinCurrentValue) *
+                        lineAnim.sinMultiplier
                     );
 
-                    if (lineAnimations[i].direction.z < 0) {
-                        sinVector.applyAxisAngle(Y_AXIS, lineAnimations[i].sinAngleRotate);
+                    if (lineAnim.direction.z < 0) {
+                        sinVector.applyAxisAngle(Y_AXIS, lineAnim.sinAngleRotate);
                     } else {
-                        sinVector.applyAxisAngle(Y_AXIS, -lineAnimations[i].sinAngleRotate);
+                        sinVector.applyAxisAngle(Y_AXIS, -lineAnim.sinAngleRotate);
                     }
-
-                    lineAnimations[i].container.position.add(lineAnimations[i].sinCurrentVector.sub(sinVector));
-                    lineAnimations[i].sinCurrentVector.set(sinVector.x, sinVector.y, sinVector.z);
+                    lineAnim.container.position.add(lineAnim.sinCurrentVector.sub(sinVector));
+                    lineAnim.sinCurrentVector.set(sinVector.x, sinVector.y, sinVector.z);
                 }
             }
         }
@@ -325,8 +319,10 @@ function createCicleSphereAnimation(data) {
         spherePosition.y,
         spherePosition.z
     );
+    let speed = (2 * radius * Math.PI) / data.rotationTime;
+    let sinTime = ((2 * radius * Math.PI) / speed) / data.sinCicles;
 
-    sphereRotations.push({
+    let sphereRotationData = {
         wrapper: animationWrapper,
         container: rotationWrapper,
         rotationVector: rotationVector.normalize(),
@@ -336,12 +332,16 @@ function createCicleSphereAnimation(data) {
         angleX: angleX,
         angleZ: angleZ,
         rotationTime: data.rotationTime,
-        sinTime: data.sinTime,
+        defaultTime: data.rotationTime,
+        sinCicles: data.sinCicles,
+        sinTime: sinTime,
         sinMultiplier: data.sinMultiplier,
         sinCurrentValue: 0,
-        sinCurrentVector: new THREE.Vector3(0,0,0),
+        sinCurrentVector: new THREE.Vector3(0, 0, 0),
         inverseRotation: inverseRotation
-    });
+    };
+
+    sphereRotations.push(sphereRotationData);
     return animationWrapper;
 }
 
@@ -356,6 +356,7 @@ function addSimpleRotation(rotationVector, object3D, time) {
     simpleRotations.push({
         rotationVector: rotationVector,
         object3D: object3D,
+        defaultTime: time,
         rotationTime: time
     });
 }
@@ -382,6 +383,7 @@ function moveObjectInsideContainer(data) {
         object3D: object3D,
         containerData: bounderies,
         directionVector: directionVector,
+        defaultSpeed: speed,
         speed: speed,
         collisionFix: fixBounderies
     });
@@ -397,9 +399,9 @@ function moveObjectInsideContainer(data) {
  * @param {Array} data.tripPoints Array of THREE.Vector3 points of trip
  * @param {Boolean} data.bounce true if obj has to restart trip, false otherwise
  * @param {Number} data.speed speed of object (units/s)
- * @param {Number} data.cosCicles number of cos cicles from point A to point B
- * @param {Boolean} data.cosMovement flag to enable cos horizontal movement
- * @param {Number} data.cosMultiplier multiplier for cos movement
+ * @param {Number} data.sinCicles number of sin cicles from point A to point B
+ * @param {Boolean} data.sinMovement flag to enable sin horizontal movement
+ * @param {Number} data.sinMultiplier multiplier for sin movement
  * @returns {Object} THREE.Object3D container of animation
  */
 function createLineAnimation(data) {
@@ -425,7 +427,7 @@ function createLineAnimation(data) {
     obj3D.lookAt(nextPoint.x, nextPoint.y, nextPoint.z);
     
     let distance = obj3D.position.distanceTo(nextPoint);
-    let tempoTot = distance/data.speed*1000;
+    let tempoTot = distance / data.speed*1000;
     let sinTime = Math.round(tempoTot / data.sinCicles);
     let sinAngleRotate = X_AXIS.angleTo(direction);
 
@@ -433,6 +435,7 @@ function createLineAnimation(data) {
         obj3D: obj3D,
         tripPoints: trip,
         bounce: data.bounce,
+        defaultSpeed: data.speed,
         speed: data.speed,
         direction: direction,
         sinMovement: data.sinMovement,
@@ -446,8 +449,57 @@ function createLineAnimation(data) {
         sinAngleRotate: sinAngleRotate,
         sinCurrentVector: new THREE.Vector3(0,0,0)
     };
+    console.log(dataANIMATION);
     lineAnimations.push(dataANIMATION);
     container.add(obj3D);
 
     return container;
+}
+
+/**
+ * Sets world animation speed by updating time of animations.
+ * 
+ * @param {Number} multiplier Number to multiply to each of animation
+ */
+function updateSpeedAnimations(multiplier) {
+    sphereRotations.forEach(sphereRot => {
+        sphereRot.rotationTime = sphereRot.defaultTime*(1/multiplier);
+        let speed = (2 * sphereRot.radius * Math.PI) / sphereRot.rotationTime;
+        sphereRot.sinTime = ((2 * sphereRot.radius * Math.PI) / speed) / sphereRot.sinCicles;
+    });
+    
+    movingOBJInsideContainers.forEach(obj => {
+        obj.speed = obj.defaultSpeed * multiplier;
+    });
+    
+    simpleRotations.forEach(simpleRot => {
+        simpleRot.rotationTime = simpleRot.defaultTime * (1/multiplier);
+    });
+
+    lineAnimations.forEach(lineAnim => {
+        lineAnim.speed = lineAnim.defaultSpeed*multiplier;
+        let nextPointIndex;
+        if (lineAnim.currentStartPoint == lineAnim.tripPoints.length - 1) {
+            nextPointIndex = 0;
+        } else {
+            nextPointIndex = lineAnim.currentStartPoint + 1;
+        }
+        let startPoint = lineAnim.tripPoints[lineAnim.currentStartPoint]; 
+        let endPoint = lineAnim.tripPoints[nextPointIndex];  
+        updateLinearSinMovement(lineAnim, startPoint, endPoint);
+    });
+} 
+/**
+ * Updates sin movement of line animation
+ * 
+ * @param {Object} lineAnim animation to update
+ * @param {Object} startPoint THREE.Vector3 point of starting
+ * @param {Object} endPoint THREE.Vector3 point of ending
+ */
+function updateLinearSinMovement(lineAnim, startPoint, endPoint) {
+    let distance = startPoint.distanceTo(endPoint);
+    let tempoTot = distance / lineAnim.speed * 1000;
+    lineAnim.sinTime = Math.round(tempoTot / lineAnim.sinCicles);
+    lineAnim.sinAngleRotate = X_AXIS.angleTo(lineAnim.direction);
+    lineAnim.sinCurrentValue = 0;
 }
