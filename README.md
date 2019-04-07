@@ -4,7 +4,7 @@
 
 Cussigh Filippo - n°123413
 
-Forgiarini Alessandro - n° fixa
+Forgiarini Alessandro - n° 120562
 
 ## Descrizione del progetto
 Il progetto prevede la realizzazione di una scena interamente modellata tramite cubi e che riprenda lo stile di Minecraft.
@@ -13,14 +13,15 @@ Si intende creare la rappresentazione di una campagna, tramite una serie di meto
 Tra le due opzioni disponibili è stata scelta la realizzazione del terreno tramite heightmap.
 Sono state inoltre implementate luci ed ombre.
 
-Le animazioni della scena vengono attivate/disabilitate con la barra spaziatrice.
+Le animazioni della scena vengono attivate/disabilitate con la barra spaziatrice. La velocità di esse può essere variata premendo i pulsanti freccia destra e sinistra della tastiera.
 
 ## Divisione del codice
 Il file principale in cui viene creata la scena è StartingCode-withLights.html.
 Tutti i metodi realizzati sono stati divisi in relativi file .js in base al loro scopo.
+Il foglio di stile della pagina è presente in una cartella separata.
+Le texture utilizzate sono raggruppate nella cartella "textures".
 
 ## Scena risultante
-
 La scena mostra un paesaggio di campagna costituito da una stalla con animali, diversi alberi, un mulino a vento, degli uccelli in volo e una papera nel laghetto.
 Tutti gli oggetti sono stati creati utilizzando cubi di larghezza 1, tuttavia per non aggiungere troppo carico poligonale alcuni elementi sono stati scalati per permettere l'utilizzo di meno cubi.
 
@@ -48,12 +49,22 @@ Dato che non si tratta di modelli geometricamente regolari, in questo caso la st
 ![](screenshots/animals.png)
 
 ## Animazioni
+Sono presenti 4 tipi di animazioni diverse:
+1. Rotazione di un oggetto su un'orbita circolare attorno ad un asse passato come parametro. L'oggetto viene ruotato in modo che guardi la verso la retta tangente alla sua traiettoria. Per variare il movimento è possible far muovere l'oggetto con moto sinusoidale.
+2. Rimbalzo di un oggetto all'interno di un rettangolo. L'oggetto necessita di un vettore direzione di partenza e una velocità. Quando l'oggetto incontra il lato del rettangolo, esso rimbalza con un urto elastico cambiando direzione.
+3. Semplice rotazione di un oggetto attorno ad un asse passato come parametro.
+4. Movimento di un oggetto su un percorso definito da un insieme di punti. Per variare il movimento è possible far muovere l'oggetto con moto sinusoidale.
 
-fixa
+Le animazioni create vengono utilizzate per animare questi oggetti:
+1. Definire il volo dei tre uccelli in cielo.
+2. Muovere il maiale all'interno del recinto.
+3. Movimento del sole e delle pale del mulino.
+4. Animazione della papera in acqua.
 
 ## Costruzione della scena
 La scena è stata costruita a partire dal terreno. Il terreno è stato disegnato su GIMP tramite pennelli sfumati per permettere un risultato omogeneo.
 I vari oggetti di scena sono stati dunque posizionati in base al terreno scelto per costruire una scena credibile.
 Sono state impostate le animazioni per gli animali, il mulino e il sole.
-Infine sono stati implementati i comandi per la gestione delle animazioni.
-fixa che comandi
+Infine sono stati implementati i comandi per la gestione della velocità delle animazioni.
+Alla primo avvio, la velocità del mondo è impostata a 1x.
+Viene data la possibilità di selezionare 9 diverse velocità per il mondo, selezionabili tramite la pressione delle frecce destra e sinistra sulla tastiera.

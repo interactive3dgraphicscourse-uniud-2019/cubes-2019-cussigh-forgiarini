@@ -14,6 +14,12 @@ function linkSpeedModifier() {
     document.addEventListener("keyup", e => {
         switch (e.key) {
             case " ":
+                if (moveWorld) {
+                    moveWorld = false;
+                } else {
+                    updateSpeedAnimations(avaiableSpeeds[currentSpeed]);
+                    enableAnimations();
+                }
                 break;
             case "ArrowLeft":
                 if (moveWorld) {

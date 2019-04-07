@@ -95,3 +95,7 @@ Creato un modello per il sole e posizionato leggermente dietro la luce direziona
 06.04.2019
 =============
 Risolto un problema nel movimento degli oggetti con movimenti sinuosoidali: a velocità diverse l'oggetto spariva dalla scena.
+
+07.04.2019
+=============
+Aggiunta la possibilità di modificare la velocità del mondo tramite i pulsanti sulla tastiera. Ci sono 9 possibli velocità, per passare da una all'altra bisogna premere Freccia Sinistra o Destra.
