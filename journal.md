@@ -99,3 +99,5 @@ Risolto un problema nel movimento degli oggetti con movimenti sinuosoidali: a ve
 07.04.2019
 =============
 Aggiunta la possibilità di modificare la velocità del mondo tramite i pulsanti sulla tastiera. Ci sono 9 possibli velocità, per passare da una all'altra bisogna premere Freccia Sinistra o Destra.
+
+Risolto un problema nelle animazioni dopo aver modificato la velocità: al cambiamento gli oggetti si muovevano a scatti.
