@@ -7,7 +7,7 @@
  */
 
 function createBigDuck(color, position) {
-    idColor = getBlockPosition(color);
+    let idColor = getBlockPosition(color);
     let duck = new THREE.Object3D();
     let feet = new THREE.Object3D();
     //body

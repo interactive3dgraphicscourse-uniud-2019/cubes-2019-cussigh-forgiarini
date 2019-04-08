@@ -167,6 +167,8 @@ function createWindmill(data) {
         {color1:"wool_colored_white"},
         {x:width/2-1, y:0,z:0
     } ));
+
+    // rotations for blades to simulate wind
     addSimpleRotation(new THREE.Vector3(1, 0, 0), blades, 5000);
     
     let bladesContainer = new THREE.Object3D();

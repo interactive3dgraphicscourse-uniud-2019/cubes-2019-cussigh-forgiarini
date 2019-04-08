@@ -1,4 +1,6 @@
-
+/**
+ * Links user interactions.
+ */
 function linkUserEvents() {
     linkSpeedModifier();    
 }

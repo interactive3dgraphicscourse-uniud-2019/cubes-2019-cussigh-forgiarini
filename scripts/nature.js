@@ -1,11 +1,11 @@
 
 /**Creates a Pine Tree
  * 
- * @param {*} dimension     3VECTOR of tree's position
- * @param {*} colorData     {color1, color2, variance} 
- *                          color1-2 are the name of the colors of the leaves
- *                          variance is the color2 presence from 0 (none) to 10 (equal to color1)
- * @param {*} position      3VECTOR of tree's position
+ * @param {Object} dimension     3VECTOR of tree's position
+ * @param {Object} colorData     {color1, color2, variance} 
+ *                               color1-2 are the name of the colors of the leaves
+ *                               variance is the color2 presence from 0 (none) to 10 (equal to color1)
+ * @param {Object} position      3VECTOR of tree's position
  */
 function createPine(dimensions, colorData, position) {
     let width = dimensions.x;
@@ -16,10 +16,10 @@ function createPine(dimensions, colorData, position) {
     let thickness = 1;
     if (depth + width >= 30) thickness = 3;
 
-    colorLog = { color1: "wool_colored_brown" }
-    colorLeaves1 = { color1: colorData.color1 };
-    colorLeaves2 = { color1: colorData.color2 };
-    colorLeavesDouble = { color1: colorData.color1, color2: colorData.color2, variance: colorData.variance };
+    let colorLog = { color1: "wool_colored_brown" }
+    let colorLeaves1 = { color1: colorData.color1 };
+    let colorLeaves2 = { color1: colorData.color2 };
+    let colorLeavesDouble = { color1: colorData.color1, color2: colorData.color2, variance: colorData.variance };
 
     // building the log
     tree.add(createRing({ x: thickness, y: Math.floor(height / 3) + 1, z: thickness }, colorLog, { x: 0, y: 0, z: 0 }));

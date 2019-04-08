@@ -1,35 +1,34 @@
 
 
 //return array with height data from img
-function getHeightData(img,scale) {
-  
-    if (scale == undefined) scale=1;
-     
-       var canvas = document.createElement( 'canvas' );
-       canvas.width = img.width;
-       canvas.height = img.height;
-       var context = canvas.getContext( '2d' );
-    
-       var size = img.width * img.height;
-       var data = new Float32Array( size );
-    
-       context.drawImage(img,0,0);
-    
-       for ( var i = 0; i < size; i ++ ) {
-           data[i] = 0
-       }
-    
-       var imgd = context.getImageData(0, 0, img.width, img.height);
-       var pix = imgd.data;
-    
-       var j=0;
-       for (var i = 0; i<pix.length; i +=4) {
-           var all = pix[i]+pix[i+1]+pix[i+2];
-           data[j++] = all/(12*scale);
-       }
-        
-       return data;
-   }
+function getHeightData(img, scale) {
+    scale = typeof scale === "undefined" ? 1 : scale;
+
+    let imgCanvas = document.createElement('canvas');
+    imgCanvas.width = img.width;
+    imgCanvas.height = img.height;
+    let context2d = imgCanvas.getContext('2d');
+
+    let size = img.width * img.height;
+    let data = new Float32Array(size);
+
+    context2d.drawImage(img, 0, 0);
+
+    for (let i = 0; i < size; i++) {
+        data[i] = 0;
+    }
+
+    let imgd = context2d.getImageData(0, 0, img.width, img.height);
+    let pix = imgd.data;
+
+    let j = 0;
+    for (let i = 0; i < pix.length; i += 4) {
+        let all = pix[i] + pix[i + 1] + pix[i + 2];
+        data[j++] = all / (12 * scale);
+    }
+
+    return data;
+}
 
 
 /**
@@ -41,10 +40,8 @@ function createTerrain() {
     // terrain
     let terrain = new THREE.Object3D();
 
-    var img = new Image();
+    let img = new Image();
     img.src = "heightMap/heightmap4.png";
-
- 
 
     img.onload = function () {
 
@@ -64,8 +61,10 @@ function createTerrain() {
         }
 
         //get height data from img
-        var data = getHeightData(img, 1);
-        // console.log(data);
+        let data = getHeightData(img, 1);
+        if(show_debug_tools){
+            console.log(data);
+        }
 
         //converts data matrix in int of wished range 
         for (let i = 0; i < data.length; i++) {
@@ -79,7 +78,6 @@ function createTerrain() {
             heightsMatrix[i] = [];
             for (let j = 0; j < sizeY; j++) {
                 heightsMatrix[i][j] = 0;
-
             }
         }
 
@@ -119,8 +117,8 @@ function createTerrain() {
                     for (let h = 0; h < altezza - minNeigh - 1; h++) {
                         // if terrain is water, color is uniform
                         // else added cubes are brown
-                        if ((Math.floor(mapValues(altezza - h - 1, 0, sizeY, 0, 6))) < 2){
-                            color = mapColor(altezza - h - 1,0, sizeY);
+                        if ((Math.floor(mapValues(altezza - h - 1, 0, sizeY, 0, 6))) < 2) {
+                            color = mapColor(altezza - h - 1, 0, sizeY);
                         }
                         else color = "wool_colored_brown";
                         terrainMatrix[i][altezza - h - 1][j] = createBlock(
@@ -140,7 +138,7 @@ function createTerrain() {
                 }
             }
         }
-        terrain.scale.set(2,2,2);
+        terrain.scale.set(2, 2, 2);
         terrain.position.set(-sizeX, -sizeY + 0.5, -sizeZ);
     }
     return terrain;
@@ -156,17 +154,13 @@ function createTerrain() {
 function mapColor(value, min, max) {
 
     let color = ["wool_colored_cyan",
-            "wool_colored_emerald",
-            "wool_colored_green",
-            "wool_colored_light_green",
-            "wool_colored_lime",
-            "wool_colored_white"]
+        "wool_colored_emerald",
+        "wool_colored_green",
+        "wool_colored_light_green",
+        "wool_colored_lime",
+        "wool_colored_white"]
 
     res = Math.floor(mapValues(value, min, max, 0, 6));
     if (res == 6) res = 5;
     return color[res];
 }
-
-
-
-

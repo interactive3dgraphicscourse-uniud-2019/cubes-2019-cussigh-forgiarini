@@ -1,12 +1,10 @@
-let controls, stats;
-
 /**
  * Creates an istance of THREE.OrbitControls used to move the camera.
  */
 function createControls() {
   controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-  // disabling key commands
+  // disabling key commands for conflics on arrow key events
   controls.enableKeys = false;
 
   //call this only in static scenes (i.e., if there is no animation loop)
@@ -58,9 +56,18 @@ function createCamera(position, lookAt) {
   camera.lookAt(lookAt);
 }
 
+/**
+ * Creates scene and animate it
+ */
 function createScene() {
-  // GROUND
+  // LIGHTS
   createLights();
+
+  // TERRAIN
+  let terrain = createTerrain();
+  scene.add(terrain);
+
+  // BUILDES
   let windmill = createWindmill({
     width: 8,
     height: 20,
@@ -73,8 +80,41 @@ function createScene() {
   });
   windmill.rotateOnAxis(Y_AXIS, -Math.PI / 4);
   scene.add(windmill);
+  
+  let recintoData = {
+    dimensions: {
+      x: 18,
+      y: 1,
+      z: 18
+    },
+    position: {
+      x: 6,
+      y: 0,
+      z: -9.5
+    }
+  };
 
-  //
+  let recinto = createRing(
+    recintoData.dimensions,
+    { color1: "wool_colored_brown" },
+    recintoData.position
+  );
+  scene.add(recinto);
+
+  let stable = createStable({
+    width: 40,
+    height: 10,
+    depth: 20,
+    colors: {
+      color1: "wool_colored_light_brown",
+      color2: "wool_colored_beige"
+    },
+    position: { x: 15, y: 0, z: -10 }
+  });
+
+  scene.add(stable);
+
+  // ANIMALS
   let flying_duck_1 = createDuck(
     "wool_colored_white",
     { x: 0, y: 0, z: 0 },
@@ -138,44 +178,13 @@ function createScene() {
     })
   );
 
-  let stable = createStable({
-    width: 40,
-    height: 10,
-    depth: 20,
-    colors: {
-      color1: "wool_colored_light_brown",
-      color2: "wool_colored_beige"
-    },
-    position: { x: 15, y: 0, z: -10 }
-  });
-
-  scene.add(stable);
-
   let pig = createPig(
     "wool_colored_light_pink",
     new THREE.Vector3(3, 0.5, -10)
   );
   pig.scale.set(0.6, 0.6, 0.6);
-  let recintoData = {
-    dimensions: {
-      x: 18,
-      y: 1,
-      z: 18
-    },
-    position: {
-      x: 6,
-      y: 0,
-      z: -9.5
-    }
-  };
 
-  let recinto = createRing(
-    recintoData.dimensions,
-    { color1: "wool_colored_brown" },
-    recintoData.position
-  );
   scene.add(pig);
-  scene.add(recinto);
 
   moveObjectInsideContainer({
     obj: pig,
@@ -205,8 +214,27 @@ function createScene() {
   );
   scene.add(cow_2);
   cow_2.scale.set(0.7, 0.7, 0.7);
+  
+  let duck_lake = createDuck("wool_colored_yellow", { x: 0, y: 0, z: 0 }, true);
+  duck_lake.scale.set(0.5, 0.5, 0.5);
+  scene.add(
+    createLineAnimation({
+      objectToAnimate: duck_lake,
+      tripPoints: [
+        new THREE.Vector3(-20, -12.5, 28),
+        new THREE.Vector3(20, -12.5, 28),
+      ],
+      bounce: true,
+      speed: 5,
+      sinMovement: true,
+      sinCicles: 3,
+      sinMultiplier: 2
+    })
+  );
+  
+  // NATURE
   let pines = [];
-
+  
   let pineColor = {
     color1: "wool_colored_emerald",
     color2: "wool_colored_turquoise",
@@ -229,34 +257,14 @@ function createScene() {
     scene.add(pine);
   });
 
-  let terrain = createTerrain();
-  scene.add(terrain);
-
-  let duck_lake = createDuck("wool_colored_yellow", { x: 0, y: 0, z: 0 }, true);
-  duck_lake.scale.set(0.5, 0.5, 0.5);
-  scene.add(
-    createLineAnimation({
-      objectToAnimate: duck_lake,
-      tripPoints: [
-        new THREE.Vector3(-20, -12.5, 28),
-        new THREE.Vector3(20, -12.5, 28),
-      ],
-      bounce: true,
-      speed: 5,
-      sinMovement: true,
-      sinCicles: 3,
-      sinMultiplier: 2
-    })
-  );
 }
 
 function init() {
   scene = new THREE.Scene();
-  show_debug_tools = false;
-  enable_shadows = true;
+
   createRenderer();
 
-  createCamera(new THREE.Vector3(10, 10, 20));
+  createCamera(new THREE.Vector3(26, 31, 88));
 
   // controls for camera
   createControls();

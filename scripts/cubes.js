@@ -1,4 +1,10 @@
-
+/**
+ * Loads textures of cubes and apply them.
+ * 
+ * @param {Object} loader THREE.TextureLoader used to load textures
+ * @param {Object} geometry Geometry of a box to apply textures
+ * @param {Array} woolColors String array of colors of wools
+ */
 function loadWools(loader, geometry, woolColors) {
 
     for (let i = 0, n = woolColors.length; i < n; i++) {
@@ -11,7 +17,7 @@ function loadWools(loader, geometry, woolColors) {
         let cube = new THREE.Mesh(geometry, material);
 
         // enable cube shadow
-        if(enable_shadows){
+        if (enable_shadows) {
             cube.castShadow = true;
             cube.receiveShadow = true;
         }
@@ -25,7 +31,9 @@ function loadWools(loader, geometry, woolColors) {
         });
     }
 }
-
+/**
+ * Initializes avaiableCubes array and loads cubes that can be used to create the scene.
+ */
 function loadCubes() {
     availableCubes = [];
 
@@ -40,7 +48,7 @@ function loadCubes() {
 
     // wools color to load
     let woolColors = [
-        "black", 
+        "black",
         "blue",
         "brown",
         "cyan",
@@ -67,6 +75,12 @@ function loadCubes() {
     loadWools(loader, geometry, woolColors);
 }
 
+/**
+ * Returns the index of the cube with the given name. If cube is not found will return -1.
+ * 
+ * @param {String} name name of the cube
+ * @returns {Integer} index of the cube if available, -1 otherwise.
+ */
 function getBlockPosition(name) {
     if (typeof name === "undefined") {
         return -1;
@@ -79,6 +93,11 @@ function getBlockPosition(name) {
     return -1;
 }
 
+/**
+ * Draws a grid containing all cubes that can be used in the scene.
+ * 
+ * @param {Object} position THREE.Vector3 position where to draw the grid
+ */
 function drawAvailableCubes(position) {
     let side = Math.ceil(Math.sqrt(availableCubes.length));
     let k = 0;
@@ -111,11 +130,11 @@ function drawAvailableCubes(position) {
  * Creates a rectangle of boxes with heigth=1
  * Height is fixed because internal boxes of a parallelepiped should not be constructed
  * 
- * @param {*} dimensions    rectangle's width and depth
- * @param {*} colorData     {color1, color2, variance} 
- *                          color1-2 are the name of the colors
- *                          variance is the color2 presence from 0 (none) to 10 (equal to color1)
- * @param {*} position      3VECTOR of rectangle's position
+ * @param {Object} dimensions    rectangle's width and depth
+ * @param {Object} colorData     {color1, color2, variance} 
+ *                               color1-2 are the name of the colors
+ *                               variance is the color2 presence from 0 (none) to 10 (equal to color1)
+ * @param {Object} position      3VECTOR of rectangle's position
  */
 
 function createRectangle(dimensions, colorData, position) {
@@ -130,8 +149,9 @@ function createRectangle(dimensions, colorData, position) {
         let idColor2 = getBlockPosition(colorData.color2);
         let currentId;
         let varianceFact = colorData.variance;
-        for (let i = 0; i < width; i++) {
-            for (let j = 0; j < depth; j++) {
+        let i, j;
+        for (i = 0; i < width; i++) {
+            for (j = 0; j < depth; j++) {
                 if (Math.floor(Math.random() * 21) >= varianceFact) currentId = idColor1;
                 else currentId = idColor2;
                 cube = availableCubes[currentId].cube.clone();
@@ -143,8 +163,9 @@ function createRectangle(dimensions, colorData, position) {
     //if second color is undefined, uses only color1
     else {
         let idColor1 = getBlockPosition(colorData.color1);
-        for (let i = 0; i < width; i++) {
-            for (let j = 0; j < depth; j++) {
+        let i, j;
+        for (i = 0; i < width; i++) {
+            for (j = 0; j < depth; j++) {
                 cube = availableCubes[idColor1].cube.clone();
                 cube.position.set(i - width / 2 + 0.5, 0, j - depth / 2 + 0.5);
                 rectangle.add(cube);
@@ -177,9 +198,10 @@ function createRing(dimensions, colorData, position) {
         let idColor1 = getBlockPosition(colorData.color1);
         let idColor2 = getBlockPosition(colorData.color2);
         let variance = colorData.variance;
-        for (let h = 0; h < height; h++) {
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < depth; j++) {
+        let h, i, j;
+        for (h = 0; h < height; h++) {
+            for (i = 0; i < width; i++) {
+                for (j = 0; j < depth; j++) {
                     if ((i == 0 || i == width - 1) || (j == 0 || j == depth - 1)) {
                         if (Math.floor(Math.random() * 21) >= variance) currentId = idColor1;
                         else currentId = idColor2;
@@ -195,9 +217,10 @@ function createRing(dimensions, colorData, position) {
     //if second color is undefined, uses only color1
     else {
         let idColor1 = getBlockPosition(colorData.color1);
-        for (let h = 0; h < height; h++) {
-            for (let i = 0; i < width; i++) {
-                for (let j = 0; j < depth; j++) {
+        let h, i, j;
+        for (h = 0; h < height; h++) {
+            for (i = 0; i < width; i++) {
+                for (j = 0; j < depth; j++) {
                     if ((i == 0 || i == width - 1) || (j == 0 || j == depth - 1)) {
                         cube = availableCubes[idColor1].cube.clone();
                         cube.position.set(i - width / 2 + 0.5, h, j - depth / 2 + 0.5);

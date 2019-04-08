@@ -58,15 +58,14 @@ function createDirectionalLight(data) {
     return dirLight;
 }
 
+/**
+ * Creates lights that illuminate the scene. 
+ */
 function createLights() {
 
-    hemiLight = createHemiLight({
-        color: rgbToHex(255, 255, 255),
-        groundColor: rgbToHex(255, 255, 255),
-        intensity: 0.4,
-        position: new THREE.Vector3(0, 0, 0)
-    });
-    scene.add(hemiLight);
+    // soft white light
+    let ambientLight = new THREE.AmbientLight( rgbToHex(255,255,255), 0.4 ); 
+    scene.add( ambientLight );
 
     let dirLightPos = new THREE.Vector3(60,0,-60);
     dirLight = createDirectionalLight({
@@ -79,15 +78,17 @@ function createLights() {
             height: 1024
         }
     });
-    let obj3D = new THREE.Object3D();
-    obj3D.add(dirLight);
+    
+    let sunWrapper = new THREE.Object3D();
+    sunWrapper.add(dirLight);
     //sun rotation
     let sun = createSun(new THREE.Vector3(65,0,-65));
-    obj3D.add(sun)
-    addSimpleRotation(new THREE.Vector3(1,0,1), obj3D, 60000);
+    sunWrapper.add(sun)
+    addSimpleRotation(new THREE.Vector3(1,0,1), sunWrapper, 60000);
 
-    scene.add(obj3D);
-    
+    scene.add(sunWrapper);
+
+    // shows area where shadows are calculated
     if(show_debug_tools){
         var helper = new THREE.CameraHelper(dirLight.shadow.camera);
         scene.add(helper);
